@@ -5,6 +5,7 @@ import puzzle.solver.BreadthFirstSearch;
 
 import java.util.*;
 
+import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
@@ -39,6 +40,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     public final int BOARD_SIZE;
 
     private final ReadOnlyObjectWrapper<HexColor>[][] board;
+
+    private final ReadOnlyIntegerWrapper steps = new ReadOnlyIntegerWrapper(0);
 
     private static final AxialPosition[] DIRECTIONS = {
             new AxialPosition(-1, 0), // Up
@@ -159,6 +162,24 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     }
 
     /**
+     * Gets the number of steps taken in the game.
+     * 
+     * @return The number of steps taken.
+     */
+    public int getSteps() {
+        return steps.get();
+    }
+
+    /**
+     * Gets a read-only property representing the number of steps taken.
+     * 
+     * @return A read-only integer property containing the number of steps.
+     */
+    public ReadOnlyIntegerWrapper getStepsProperty() {
+        return steps;
+    }
+
+    /**
      * Gets the neighbors of the hex at the specified position.
      * 
      * @param position The position of the hex.
@@ -253,6 +274,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             case COUNTERCLOCKWISE -> rotateCounterClockwise(moveAction.from());
             default -> throw new IllegalArgumentException("Invalid rotation action: " + moveAction.action());
         }
+        steps.set(steps.get() + 1);
     }
 
     private void rotateCounterClockwise(AxialPosition from) {
