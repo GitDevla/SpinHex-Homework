@@ -6,6 +6,17 @@ import spinhex.model.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SpinHexModelTest {
+    public static HexColor[][] smallBoardStart = new HexColor[][] {
+            { HexColor.NONE, HexColor.RED, HexColor.RED },
+            { HexColor.RED, HexColor.GREEN, HexColor.RED },
+            { HexColor.BLUE, HexColor.RED, HexColor.NONE }
+    };
+    public static HexColor[][] smallBoardTarget = new HexColor[][] {
+            { HexColor.NONE, HexColor.BLUE, HexColor.RED },
+            { HexColor.RED, HexColor.GREEN, HexColor.RED },
+            { HexColor.RED, HexColor.RED, HexColor.NONE }
+    };
+
     @Test
     public void testBoundsDetection() {
         var board = new SpinHexModel();
@@ -52,27 +63,37 @@ public class SpinHexModelTest {
         assertTrue(board.isLegalToMoveFrom(new AxialPosition(2, 2)));
 
         assertFalse(board.isLegalToMoveFrom(new AxialPosition(0, 2)));
+        assertFalse(board.isLegalToMoveFrom(new AxialPosition(0, 0)));
         assertFalse(board.isLegalToMoveFrom(new AxialPosition(1, 1)));
         assertFalse(board.isLegalToMoveFrom(new AxialPosition(0, 0)));
         assertFalse(board.isLegalToMoveFrom(new AxialPosition(4, 4)));
         assertFalse(board.isLegalToMoveFrom(new AxialPosition(2, 0)));
+        assertFalse(board.isLegalToMoveFrom(new AxialPosition(-1, 0)));
+        assertFalse(board.isLegalToMoveFrom(new AxialPosition(5, 5)));
     }
 
-
     @Test
-    public void isLegalMove(){
+    public void testIsLegalMove() {
         var board = new SpinHexModel();
         assertTrue(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.CLOCKWISE)));
         assertTrue(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(3, 2), Rotation.COUNTERCLOCKWISE)));
 
-
         assertFalse(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(0, 0), Rotation.CLOCKWISE)));
         assertFalse(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(4, 4), Rotation.COUNTERCLOCKWISE)));
-        assertFalse(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(3, 3), null)));
+        assertFalse(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(2, 2), null)));
     }
 
     @Test
-    public void testRotateClockwise(){
+    public void testInvalidRotation() {
+        var board = new SpinHexModel();
+        assertThrows(IllegalArgumentException.class,
+                () -> board.makeMove(new TwoPhaseAction<>(new AxialPosition(-1, -1), Rotation.CLOCKWISE)));
+        assertThrows(IllegalArgumentException.class,
+                () -> board.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), null)));
+    }
+
+    @Test
+    public void testRotateClockwise() {
         var board = new SpinHexModel();
         var centerStartingHex = board.getHex(new AxialPosition(2, 2));
         var baseNeighbors = board.getNeighbors(new AxialPosition(2, 2));
@@ -85,7 +106,7 @@ public class SpinHexModelTest {
     }
 
     @Test
-    public void testRotateCounterClockwise(){
+    public void testRotateCounterClockwise() {
         var board = new SpinHexModel();
         var centerStartingHex = board.getHex(new AxialPosition(2, 2));
         var baseNeighbors = board.getNeighbors(new AxialPosition(2, 2));
@@ -98,17 +119,17 @@ public class SpinHexModelTest {
     }
 
     @Test
-    public void testRotate(){
+    public void testRotate() {
         var base = new SpinHexModel();
         var copy = base.clone();
         base.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.CLOCKWISE));
-        assertNotEquals(base,copy);
+        assertNotEquals(base, copy);
         base.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.COUNTERCLOCKWISE));
         assertEquals(base, copy);
     }
 
     @Test
-    public void testRotate2(){
+    public void testRotate2() {
         var base = new SpinHexModel();
         var copy = base.clone();
         for (int i = 0; i < 5; i++) {
@@ -117,5 +138,46 @@ public class SpinHexModelTest {
         }
         base.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.CLOCKWISE));
         assertEquals(base, copy);
+    }
+
+    @Test
+    public void testIsSolved() {
+        var board = new SpinHexModel(smallBoardStart, smallBoardTarget);
+        assertFalse(board.isSolved());
+        board.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1), Rotation.CLOCKWISE));
+        assertFalse(board.isSolved());
+        board.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1), Rotation.CLOCKWISE));
+        assertTrue(board.isSolved());
+        board.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1), Rotation.CLOCKWISE));
+        assertFalse(board.isSolved());
+    }
+
+    @Test
+    public void testGetLegalMoves() {
+        var board = new SpinHexModel();
+        var legalMoves = board.getLegalMoves();
+        var expectedLegalPositions = new AxialPosition[] {
+                new AxialPosition(1, 2),
+                new AxialPosition(1, 3),
+                new AxialPosition(2, 1),
+                new AxialPosition(2, 2),
+                new AxialPosition(2, 3),
+                new AxialPosition(3, 1),
+                new AxialPosition(3, 2),
+        };
+        for (var position : expectedLegalPositions) {
+            assertTrue(legalMoves.contains(new TwoPhaseAction<>(position, Rotation.CLOCKWISE)));
+            assertTrue(legalMoves.contains(new TwoPhaseAction<>(position, Rotation.COUNTERCLOCKWISE)));
+        }
+    }
+
+    @Test
+    public void testGetHexProperty() {
+        var board = new SpinHexModel(smallBoardStart, smallBoardTarget);
+        var property = board.getHexProperty(1, 0);
+        assertEquals(property.get(), HexColor.RED);
+        board.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1), Rotation.CLOCKWISE));
+        assertEquals(property.get(), HexColor.BLUE);
+        assertThrows(IllegalArgumentException.class, () -> board.getHexProperty(-1, 0));
     }
 }
