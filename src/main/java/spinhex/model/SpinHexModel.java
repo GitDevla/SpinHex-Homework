@@ -2,6 +2,8 @@ package spinhex.model;
 
 import puzzle.State;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation> {
@@ -40,6 +42,28 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             throw new IllegalArgumentException("Position out of bounds: " + position);
         }
         return board[position.q()][position.s()];
+    }
+
+    public List<HexColor> getNeighbors(AxialPosition position) {
+        List<HexColor> neighbors = new ArrayList<>();
+        var q = position.q();
+        var s = position.s();
+        var directions = new AxialPosition[]{
+                new AxialPosition(q-1, s), 
+                new AxialPosition(q-1, s+1), 
+                new AxialPosition(q, s+1),
+                new AxialPosition(q+1, s),
+                new AxialPosition(q+1, s-1), 
+                new AxialPosition(q, s-1)
+        };
+        for (var dir : directions) {
+            if (isInBounds(dir)) {
+                neighbors.add(getHex(dir));
+            } else {
+                neighbors.add(HexColor.NONE);
+            }
+        }
+        return neighbors;
     }
 
     @Override

@@ -30,4 +30,19 @@ public class SpinHexModelTest {
         assertThrows(IllegalArgumentException.class, () -> board.getHex(new AxialPosition(-1, 0)));
         assertThrows(IllegalArgumentException.class, () -> board.getHex(new AxialPosition(5, 5)));
     }
+
+    @Test
+    public void testGetNeighbors() {
+        var board = new SpinHexModel();
+        var neighbors = board.getNeighbors(new AxialPosition(1, 1));
+        assertEquals(6, neighbors.size());
+        assertTrue(neighbors.contains(HexColor.RED));
+        assertTrue(neighbors.contains(HexColor.BLUE));
+        assertTrue(neighbors.contains(HexColor.NONE));
+
+        neighbors = board.getNeighbors(new AxialPosition(0, 2));
+        assertEquals(6, neighbors.size());
+        assertTrue(neighbors.contains(HexColor.RED));
+        assertTrue(neighbors.contains(HexColor.NONE));
+    }
 }
