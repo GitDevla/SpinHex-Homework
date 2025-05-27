@@ -83,7 +83,13 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     @Override
     public State<TwoPhaseAction<AxialPosition, Rotation>> clone() {
-        return null;
+        SpinHexModel copy = new SpinHexModel();
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                copy.board[i][j] = this.board[i][j];
+            }
+        }
+        return copy;
     }
 
     @Override
