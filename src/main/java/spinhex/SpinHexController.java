@@ -29,25 +29,25 @@ public class SpinHexController {
 
     @FXML
     private void initialize() {
-        for (var i = 2; i < 5; i++) {
-            gamePane.getChildren().add(createHex(0, i, 1));
-        }
-        for (var i = 1; i < 5; i++) {
-            gamePane.getChildren().add(createHex(1, i, 0.5));
-        }
-        for (var i = 0; i < 5; i++) {
-            gamePane.getChildren().add(createHex(2, i, 0));
-        }
-        for (var i = 0; i < 4; i++) {
-            gamePane.getChildren().add(createHex(3, i, -0.5));
-        }
-        for (var i = 0; i < 3; i++) {
-            gamePane.getChildren().add(createHex(4, i, -1.0));
+        double offsetStart = (double) (model.BOARD_SIZE - 1) / 4;
+        for (var i = 0; i < model.BOARD_SIZE; i++) {
+            for (var j = 0; j < model.BOARD_SIZE; j++) {
+                var newHex = createHex(i, j, offsetStart);
+                if (newHex == null)
+                    continue;
+                gamePane.getChildren().add(newHex);
+            }
+            offsetStart -= 0.5;
+
         }
         selector.phaseProperty().addListener(this::showSelectionPhaseChange);
     }
 
     private StackPane createHex(int row, int col, double leftOffset) {
+        var modelHex = model.getHexProperty(row, col);
+        if (modelHex.get() == HexColor.NONE) {
+            return null;
+        }
         var width = 80;
         var height = 80;
         double xOffset = col * width;
@@ -63,10 +63,10 @@ public class SpinHexController {
         square.getStyleClass().add("hex-tile");
 
         var circle = new Circle((double) width / 2.7);
-        circle.fillProperty().bind(createHexBindingColor(model.getHexProperty(row, col)));
+        circle.fillProperty().bind(createHexBindingColor(modelHex));
 
         var text = new javafx.scene.text.Text();
-        text.textProperty().bind(createHexBindingString(model.getHexProperty(row, col)));
+        text.textProperty().bind(createHexBindingString(modelHex));
         text.setFill(Color.WHITE);
         text.setBoundsType(TextBoundsType.VISUAL);
 
@@ -126,7 +126,7 @@ public class SpinHexController {
     }
 
     private void showSelectionPhaseChange(ObservableValue<? extends TwoPhaseActionSelector.Phase> value,
-            TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
+                                          TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
         switch (newPhase) {
             case SELECT_FROM -> {
             }
