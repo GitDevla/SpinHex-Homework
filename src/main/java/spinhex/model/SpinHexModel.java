@@ -1,0 +1,68 @@
+package spinhex.model;
+
+import puzzle.State;
+
+import java.util.Set;
+
+public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation> {
+    public static final int BOARD_SIZE = 5;
+    private final HexColor[][] board;
+
+    public SpinHexModel() {
+        board = new HexColor[][]{
+                {HexColor.NONE, HexColor.NONE, HexColor.RED, HexColor.RED, HexColor.RED},
+                {HexColor.NONE, HexColor.RED, HexColor.RED, HexColor.RED, HexColor.BLUE},
+                {HexColor.BLUE, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE},
+                {HexColor.BLUE, HexColor.GREEN, HexColor.GREEN, HexColor.GREEN, HexColor.NONE},
+                {HexColor.GREEN, HexColor.GREEN, HexColor.GREEN, HexColor.NONE, HexColor.NONE}
+        };
+    }
+
+    @Override
+    public String toString() {
+        var sb = new StringBuilder();
+        for (var i = 0; i < BOARD_SIZE; i++) {
+            for (var j = 0; j < BOARD_SIZE; j++) {
+                sb.append(board[i][j].ordinal()).append('\t');
+            }
+            sb.append('\n');
+        }
+        return sb.toString();
+    }
+
+
+    @Override
+    public boolean isLegalToMoveFrom(AxialPosition from) {
+        return false;
+    }
+
+    @Override
+    public boolean isSolved() {
+        return false;
+    }
+
+    @Override
+    public Set<TwoPhaseAction<AxialPosition, Rotation>> getLegalMoves() {
+        return Set.of();
+    }
+
+    @Override
+    public State<TwoPhaseAction<AxialPosition, Rotation>> clone() {
+        return null;
+    }
+
+    @Override
+    public boolean isLegalMove(TwoPhaseAction<AxialPosition, Rotation> axialPositionRotationTwoPhaseAction) {
+        return false;
+    }
+
+    @Override
+    public void makeMove(TwoPhaseAction<AxialPosition, Rotation> axialPositionRotationTwoPhaseAction) {
+
+    }
+
+    public static void main(String[] args) {
+        var model = new SpinHexModel();
+        System.out.println(model);
+    }
+}
