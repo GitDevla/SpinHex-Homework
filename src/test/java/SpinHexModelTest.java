@@ -70,4 +70,41 @@ public class SpinHexModelTest {
         assertFalse(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(4, 4), Rotation.COUNTERCLOCKWISE)));
         assertFalse(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(3, 3), null)));
     }
+
+    @Test
+    public void testRotateClockwise(){
+        var board = new SpinHexModel();
+        var centerStartingHex = board.getHex(new AxialPosition(2, 2));
+        var baseNeighbors = board.getNeighbors(new AxialPosition(2, 2));
+        board.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.CLOCKWISE));
+        var centerRotatedHex = board.getHex(new AxialPosition(2, 2));
+        var rotatedNeighbors = board.getNeighbors(new AxialPosition(2, 2));
+
+        assertTrue(rotatedNeighbors.containsAll(baseNeighbors));
+        assertEquals(centerStartingHex, centerRotatedHex);
+    }
+
+    @Test
+    public void testRotateCounterClockwise(){
+        var board = new SpinHexModel();
+        var centerStartingHex = board.getHex(new AxialPosition(2, 2));
+        var baseNeighbors = board.getNeighbors(new AxialPosition(2, 2));
+        board.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.COUNTERCLOCKWISE));
+        var centerRotatedHex = board.getHex(new AxialPosition(2, 2));
+        var rotatedNeighbors = board.getNeighbors(new AxialPosition(2, 2));
+
+        assertTrue(rotatedNeighbors.containsAll(baseNeighbors));
+        assertEquals(centerStartingHex, centerRotatedHex);
+    }
+
+    @Test
+    public void testRotate(){
+        var base = new SpinHexModel();
+        var copy = base.clone();
+        base.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.CLOCKWISE));
+        assertNotEquals(base,copy);
+        base.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.COUNTERCLOCKWISE));
+        assertEquals(base, copy);
+
+    }
 }

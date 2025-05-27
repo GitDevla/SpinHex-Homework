@@ -2,13 +2,19 @@ package spinhex.model;
 
 import puzzle.State;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation> {
     public static final int BOARD_SIZE = 5;
     private final HexColor[][] board;
+    private static final AxialPosition[] DIRECTIONS = {
+            new AxialPosition(-1, 0), // Up
+            new AxialPosition(-1, 1), // Up-Right
+            new AxialPosition(0, 1),  // Right
+            new AxialPosition(1, 0),  // Down
+            new AxialPosition(1, -1), // Down-Left
+            new AxialPosition(0, -1)  // Left
+    };
 
     public SpinHexModel() {
         board = new HexColor[][]{
@@ -46,19 +52,10 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     public List<HexColor> getNeighbors(AxialPosition position) {
         List<HexColor> neighbors = new ArrayList<>();
-        var q = position.q();
-        var s = position.s();
-        var directions = new AxialPosition[]{
-                new AxialPosition(q-1, s), 
-                new AxialPosition(q-1, s+1), 
-                new AxialPosition(q, s+1),
-                new AxialPosition(q+1, s),
-                new AxialPosition(q+1, s-1), 
-                new AxialPosition(q, s-1)
-        };
-        for (var dir : directions) {
-            if (isInBounds(dir)) {
-                neighbors.add(getHex(dir));
+        for (var dir : DIRECTIONS) {
+            AxialPosition neighborPos = position.add(dir);
+            if (isInBounds(neighborPos)) {
+                neighbors.add(getHex(neighborPos));
             } else {
                 neighbors.add(HexColor.NONE);
             }
@@ -99,7 +96,39 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     @Override
     public void makeMove(TwoPhaseAction<AxialPosition, Rotation> axialPositionRotationTwoPhaseAction) {
+        if (!isLegalMove(axialPositionRotationTwoPhaseAction)) {
+            throw new IllegalArgumentException("Illegal move: " + axialPositionRotationTwoPhaseAction);
+        }
 
+        switch (axialPositionRotationTwoPhaseAction.action()) {
+            case CLOCKWISE -> rotateClockwise(axialPositionRotationTwoPhaseAction.from());
+            case COUNTERCLOCKWISE -> rotateCounterClockwise(axialPositionRotationTwoPhaseAction.from());
+            default -> throw new IllegalArgumentException("Invalid rotation action: " + axialPositionRotationTwoPhaseAction.action());
+        }
+    }
+
+    private void rotateCounterClockwise(AxialPosition from) {
+        var firstDqs = DIRECTIONS[0];
+        var temp = getHex(from.add(firstDqs));
+        for (int i = 0; i < 5; i++) {
+            var current = from.add(DIRECTIONS[i]);
+            var next = from.add(DIRECTIONS[i + 1]);
+            board[current.q()][current.s()] = getHex(next);
+        }
+        var lastDqs = DIRECTIONS[5];
+        board[from.add(lastDqs).q()][from.add(lastDqs).s()] = temp;
+    }
+
+    private void rotateClockwise(AxialPosition from) {
+        var lastDqs = DIRECTIONS[5];
+        var temp = getHex(from.add(lastDqs));
+        for (int i = 5; i > 0; i--) {
+            var current = from.add(DIRECTIONS[i]);
+            var previous = from.add(DIRECTIONS[i - 1]);
+            board[current.q()][current.s()] = getHex(previous);
+        }
+        var firstDqs = DIRECTIONS[0];
+        board[from.add(firstDqs).q()][from.add(firstDqs).s()] = temp;
     }
 
     public static void main(String[] args) {
