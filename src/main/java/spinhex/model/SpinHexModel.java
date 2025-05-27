@@ -68,7 +68,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     @Override
     public boolean isLegalToMoveFrom(AxialPosition from) {
-        return false;
+        return isInBounds(from) && getHex(from) != HexColor.NONE && getNeighbors(from).stream().noneMatch(color -> color == HexColor.NONE);
     }
 
     @Override

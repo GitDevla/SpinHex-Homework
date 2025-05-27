@@ -45,4 +45,15 @@ public class SpinHexModelTest {
         assertTrue(neighbors.contains(HexColor.RED));
         assertTrue(neighbors.contains(HexColor.NONE));
     }
+
+    @Test
+    public void testIsLegalToMoveFrom() {
+        var board = new SpinHexModel();
+        assertTrue(board.isLegalToMoveFrom(new AxialPosition(2, 2)));
+
+        assertFalse(board.isLegalToMoveFrom(new AxialPosition(0, 2)));
+        assertFalse(board.isLegalToMoveFrom(new AxialPosition(0, 0)));
+        assertFalse(board.isLegalToMoveFrom(new AxialPosition(4, 4)));
+        assertFalse(board.isLegalToMoveFrom(new AxialPosition(2, 0)));
+    }
 }
