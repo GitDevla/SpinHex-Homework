@@ -314,10 +314,19 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public boolean equals(Object o) {
+        if (this == o)
+            return true;
         if (o == null || getClass() != o.getClass())
             return false;
         SpinHexModel that = (SpinHexModel) o;
-        return Objects.deepEquals(board, that.board);
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (this.board[i][j].getValue() != that.board[i][j].getValue()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
