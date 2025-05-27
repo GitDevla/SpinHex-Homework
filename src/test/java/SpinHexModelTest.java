@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.Test;
 import spinhex.model.TwoPhaseActionState.TwoPhaseAction;
-
+import spinhex.model.AxialPosition;
 import spinhex.model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
