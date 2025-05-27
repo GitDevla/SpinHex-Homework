@@ -105,6 +105,17 @@ public class SpinHexModelTest {
         assertNotEquals(base,copy);
         base.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.COUNTERCLOCKWISE));
         assertEquals(base, copy);
+    }
 
+    @Test
+    public void testRotate2(){
+        var base = new SpinHexModel();
+        var copy = base.clone();
+        for (int i = 0; i < 5; i++) {
+            base.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.CLOCKWISE));
+            assertNotEquals(base, copy);
+        }
+        base.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.CLOCKWISE));
+        assertEquals(base, copy);
     }
 }
