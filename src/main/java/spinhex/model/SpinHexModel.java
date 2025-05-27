@@ -50,14 +50,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     };
 
     private final HexColor[][] solvedBoard;
-    // private static final HexColor[][] solvedBoard = {
-    // {HexColor.NONE, HexColor.NONE, HexColor.RED, HexColor.RED, HexColor.RED},
-    // {HexColor.NONE, HexColor.GREEN, HexColor.BLUE, HexColor.RED, HexColor.RED},
-    // {HexColor.BLUE, HexColor.GREEN, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE},
-    // {HexColor.BLUE, HexColor.BLUE, HexColor.RED, HexColor.GREEN, HexColor.NONE},
-    // {HexColor.GREEN, HexColor.GREEN, HexColor.GREEN, HexColor.NONE,
-    // HexColor.NONE}
-    // };
 
     private final HashSet<TwoPhaseAction<AxialPosition, Rotation>> legalMoves;
 
