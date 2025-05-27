@@ -6,7 +6,11 @@
     <artifactId>spinhex</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
-    <description><!-- TODO: a brief description of your project --></description>
+    <description>
+        SpinHex is an exam project for the Faculty of Informatics, University of Debrecen. 
+        It is a JavaFX-based implementation of a hexagonal board puzzle game. 
+        The project demonstrates object-oriented design,Model-View-Controller Architecture, JavaFX UI, and algorithmic problem solving as part of coursework requirements.
+    </description>
     <developers>
         <developer>
             <name>Pataki Dávid Ferenc</name>
