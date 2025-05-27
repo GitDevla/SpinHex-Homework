@@ -36,7 +36,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     /*
      * The size of the SpinHex board.
      */
-    public static final int BOARD_SIZE = 5;
+    public final int BOARD_SIZE;
 
     private final ReadOnlyObjectWrapper<HexColor>[][] board;
 
@@ -49,13 +49,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             new AxialPosition(0, -1) // Left
     };
 
-    private static final HexColor[][] solvedBoard = {
-            { HexColor.NONE, HexColor.NONE, HexColor.GREEN, HexColor.RED, HexColor.GREEN },
-            { HexColor.NONE, HexColor.RED, HexColor.BLUE, HexColor.BLUE, HexColor.RED },
-            { HexColor.GREEN, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE, HexColor.GREEN },
-            { HexColor.RED, HexColor.BLUE, HexColor.BLUE, HexColor.RED, HexColor.NONE },
-            { HexColor.GREEN, HexColor.RED, HexColor.GREEN, HexColor.NONE, HexColor.NONE }
-    };
+    private final HexColor[][] solvedBoard;
     // private static final HexColor[][] solvedBoard = {
     // {HexColor.NONE, HexColor.NONE, HexColor.RED, HexColor.RED, HexColor.RED},
     // {HexColor.NONE, HexColor.GREEN, HexColor.BLUE, HexColor.RED, HexColor.RED},
@@ -73,20 +67,37 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * empty.
      */
     public SpinHexModel() {
-        var starterBoard = new HexColor[][] {
+        this(new HexColor[][] {
                 { HexColor.NONE, HexColor.NONE, HexColor.RED, HexColor.RED, HexColor.RED },
                 { HexColor.NONE, HexColor.RED, HexColor.RED, HexColor.RED, HexColor.BLUE },
                 { HexColor.BLUE, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE },
                 { HexColor.BLUE, HexColor.GREEN, HexColor.GREEN, HexColor.GREEN, HexColor.NONE },
                 { HexColor.GREEN, HexColor.GREEN, HexColor.GREEN, HexColor.NONE, HexColor.NONE }
-        };
+        }, new HexColor[][] {
+                { HexColor.NONE, HexColor.NONE, HexColor.GREEN, HexColor.RED, HexColor.GREEN },
+                { HexColor.NONE, HexColor.RED, HexColor.BLUE, HexColor.BLUE, HexColor.RED },
+                { HexColor.GREEN, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE, HexColor.GREEN },
+                { HexColor.RED, HexColor.BLUE, HexColor.BLUE, HexColor.RED, HexColor.NONE },
+                { HexColor.GREEN, HexColor.RED, HexColor.GREEN, HexColor.NONE, HexColor.NONE }
+        });
+    }
+
+    /**
+     * Constructs a new {@code SpinHexModel} with a specified starting board and
+     * target board.
+     *
+     * @param startingBoard The initial configuration of the board.
+     * @param targetBoard   The solved configuration of the board.
+     */
+    public SpinHexModel(HexColor[][] startingBoard, HexColor[][] targetBoard) {
+        BOARD_SIZE = startingBoard.length;
         board = new ReadOnlyObjectWrapper[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                board[i][j] = new ReadOnlyObjectWrapper<>(starterBoard[i][j]);
+                board[i][j] = new ReadOnlyObjectWrapper<>(startingBoard[i][j]);
             }
         }
-
+        this.solvedBoard = targetBoard;
         legalMoves = generateLegalMoves();
     }
 
@@ -277,13 +288,14 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public State<TwoPhaseAction<AxialPosition, Rotation>> clone() {
-        SpinHexModel clone = new SpinHexModel();
+        HexColor[][] board = new HexColor[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                clone.board[i][j].set(this.board[i][j].getValue());
+                board[i][j] = this.board[i][j].getValue();
             }
         }
-        return clone;
+
+        return new SpinHexModel(board, solvedBoard);
     }
 
     /**
@@ -341,16 +353,29 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     }
 
     public static void main(String[] args) {
-        SpinHexModel model = new SpinHexModel();
-        model.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.CLOCKWISE));
-        model.makeMove(new TwoPhaseAction<>(new AxialPosition(3, 2), Rotation.CLOCKWISE));
-        model.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 2), Rotation.CLOCKWISE));
-        model.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 3), Rotation.CLOCKWISE));
-        model.makeMove(new TwoPhaseAction<>(new AxialPosition(3, 2), Rotation.COUNTERCLOCKWISE));
+        var smallBoardStart = new HexColor[][] {
+                { HexColor.NONE, HexColor.RED, HexColor.RED },
+                { HexColor.RED, HexColor.GREEN, HexColor.RED },
+                { HexColor.BLUE, HexColor.RED, HexColor.NONE }
+        };
+        var smallBoardTarget = new HexColor[][] {
+                { HexColor.NONE, HexColor.BLUE, HexColor.RED },
+                { HexColor.RED, HexColor.GREEN, HexColor.RED },
+                { HexColor.RED, HexColor.RED, HexColor.NONE }
+        };
+        SpinHexModel model = new SpinHexModel(smallBoardStart, smallBoardTarget);
+        for (int i = 0; i < 4; i++) {
+            model.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1), Rotation.COUNTERCLOCKWISE));
+        }
         System.out.println(model);
         System.out.println(model.isSolved());
 
+        smallBoardStart = new HexColor[][] {
+                { HexColor.NONE, HexColor.RED, HexColor.RED },
+                { HexColor.RED, HexColor.GREEN, HexColor.RED },
+                { HexColor.BLUE, HexColor.RED, HexColor.NONE }
+        };
         new BreadthFirstSearch<TwoPhaseAction<AxialPosition, Rotation>>()
-                .solveAndPrintSolution(new SpinHexModel());
+                .solveAndPrintSolution(new SpinHexModel(smallBoardStart, smallBoardTarget));
     }
 }
