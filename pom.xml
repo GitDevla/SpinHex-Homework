@@ -25,6 +25,7 @@
         <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
         <maven.surefire.version>3.5.3</maven.surefire.version>
         <exec.mainClass>spinhex.Main</exec.mainClass>
+        <tinylog.version>2.8.0-M1</tinylog.version>
     </properties>
     <dependencies>
         <dependency>
@@ -54,6 +55,18 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-api</artifactId>
+            <version>${tinylog.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-impl</artifactId>
+            <version>${tinylog.version}</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
     <build>
