@@ -24,6 +24,8 @@ public class SpinHexController {
 
     private static final int HEX_SIZE = 80;
 
+    private String username;
+
     @FXML
     private Pane gamePane;
 
@@ -34,12 +36,17 @@ public class SpinHexController {
             { HexColor.NONE, HexColor.RED, HexColor.RED },
             { HexColor.RED, HexColor.GREEN, HexColor.RED },
             { HexColor.BLUE, HexColor.RED, HexColor.NONE }
-    },new HexColor[][] {
+    }, new HexColor[][] {
             { HexColor.NONE, HexColor.BLUE, HexColor.RED },
             { HexColor.RED, HexColor.GREEN, HexColor.RED },
             { HexColor.RED, HexColor.RED, HexColor.NONE }
     });
     private final JFXTwoPhaseActionSelector<AxialPosition, Rotation> selector = new JFXTwoPhaseActionSelector<>(model);
+
+    public void setUsername(String username) {
+        this.username = username;
+        Logger.info("Username set to: {}", username);
+    }
 
     @FXML
     private void initialize() {
@@ -48,7 +55,7 @@ public class SpinHexController {
         selector.phaseProperty().addListener(this::showSelectionPhaseChange);
     }
 
-    private void generateHexGridInPlain(Pane pane,HexGenerator strategy){
+    private void generateHexGridInPlain(Pane pane, HexGenerator strategy) {
         var offsetStart = (double) (model.BOARD_SIZE - 1) / 4;
         for (var i = 0; i < model.BOARD_SIZE; i++) {
             for (var j = 0; j < model.BOARD_SIZE; j++) {
@@ -66,7 +73,7 @@ public class SpinHexController {
         StackPane create(int row, int col, double leftOffset);
     }
 
-    private StackPane createHexContainer(int row,int col,double leftOffset){
+    private StackPane createHexContainer(int row, int col, double leftOffset) {
         double xOffset = col * HEX_SIZE;
         xOffset -= leftOffset * HEX_SIZE;
         var yOffset = row * (HEX_SIZE * 0.75);
@@ -78,7 +85,7 @@ public class SpinHexController {
         square.getProperties().put("q", row);
         square.getProperties().put("s", col);
         square.getStyleClass().add("hex-tile");
-        return  square;
+        return square;
     }
 
     private Circle createHexCircle() {
@@ -92,14 +99,13 @@ public class SpinHexController {
         return text;
     }
 
-
     private StackPane createMockHex(int row, int col, double leftOffset) {
         var modelHex = model.getHexProperty(row, col);
         if (modelHex.get() == HexColor.NONE) {
             return null;
         }
 
-        var square = createHexContainer(row,col,leftOffset);
+        var square = createHexContainer(row, col, leftOffset);
         var circle = createHexCircle();
         circle.fillProperty().set(assignHexColorToPaint(model.getSolution()[row][col]));
         var text = createHexText();
@@ -114,7 +120,7 @@ public class SpinHexController {
             return null;
         }
 
-        var square = createHexContainer(row,col,leftOffset);
+        var square = createHexContainer(row, col, leftOffset);
         var circle = createHexCircle();
         circle.fillProperty().bind(createHexBindingColor(modelHex));
         var text = createHexText();
@@ -137,7 +143,7 @@ public class SpinHexController {
         };
     }
 
-    private Paint assignHexColorToPaint(HexColor hexColor){
+    private Paint assignHexColorToPaint(HexColor hexColor) {
         return switch (hexColor) {
             case NONE -> Color.TRANSPARENT;
             case RED -> Color.RED;
@@ -145,7 +151,8 @@ public class SpinHexController {
             case GREEN -> Color.GREEN;
         };
     }
-    private String assignHexColorToString(HexColor hexColor){
+
+    private String assignHexColorToString(HexColor hexColor) {
         return switch (hexColor) {
             case NONE -> "";
             case RED -> "P";

@@ -9,8 +9,8 @@ import javafx.stage.Stage;
 public class BoardGameApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/game.fxml"));
-        stage.setTitle("SpinHex");
+        Parent root = FXMLLoader.load(getClass().getResource("/start.fxml"));
+        stage.setTitle("SpinHex Start Menu");
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setResizable(false);
