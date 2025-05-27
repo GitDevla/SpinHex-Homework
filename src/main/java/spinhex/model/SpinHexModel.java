@@ -100,8 +100,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     }
 
     @Override
-    public Set<TwoPhaseAction<AxialPosition, Rotation>> getLegalMoves() {
-        return Collections.unmodifiableSet(legalMoves);
+    public HashSet<TwoPhaseAction<AxialPosition, Rotation>> getLegalMoves() {
+        return new HashSet<>(legalMoves);
     }
 
     @Override
