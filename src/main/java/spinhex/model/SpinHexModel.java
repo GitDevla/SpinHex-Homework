@@ -93,6 +93,15 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         legalMoves = generateLegalMoves();
     }
 
+    /**
+     * Gets the solved configuration of the SpinHex board.
+     * 
+     * @return A 2D array representing the solved configuration of the board.
+     */
+    public HexColor[][] getSolution() {
+        return solvedBoard;
+    }
+
     private HashSet<TwoPhaseAction<AxialPosition, Rotation>> generateLegalMoves() {
         final HashSet<TwoPhaseAction<AxialPosition, Rotation>> legalMoves;
         legalMoves = new HashSet<>();

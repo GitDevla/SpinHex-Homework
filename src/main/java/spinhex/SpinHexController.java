@@ -24,6 +24,9 @@ public class SpinHexController {
     @FXML
     private Pane gamePane;
 
+    @FXML
+    private Pane solutionPane;
+
     private final SpinHexModel model = new SpinHexModel();
     private final JFXTwoPhaseActionSelector<AxialPosition, Rotation> selector = new JFXTwoPhaseActionSelector<>(model);
 
@@ -32,18 +35,60 @@ public class SpinHexController {
         double offsetStart = (double) (model.BOARD_SIZE - 1) / 4;
         for (var i = 0; i < model.BOARD_SIZE; i++) {
             for (var j = 0; j < model.BOARD_SIZE; j++) {
-                var newHex = createHex(i, j, offsetStart);
+                var newHex = createInteractiveHex(i, j, offsetStart);
                 if (newHex == null)
                     continue;
                 gamePane.getChildren().add(newHex);
             }
             offsetStart -= 0.5;
-
+        }
+        offsetStart = (double) (model.BOARD_SIZE - 1) / 4;
+        for (var i = 0; i < model.BOARD_SIZE; i++) {
+            for (var j = 0; j < model.BOARD_SIZE; j++) {
+                var newHex = createMockHex(i, j, offsetStart);
+                if (newHex == null)
+                    continue;
+                solutionPane.getChildren().add(newHex);
+            }
+            offsetStart -= 0.5;
         }
         selector.phaseProperty().addListener(this::showSelectionPhaseChange);
     }
 
-    private StackPane createHex(int row, int col, double leftOffset) {
+    private StackPane createMockHex(int row, int col, double leftOffset) {
+        var modelHex = model.getHexProperty(row, col);
+        if (modelHex.get() == HexColor.NONE) {
+            return null;
+        }
+        var width = 80;
+        var height = 80;
+        double xOffset = col * width;
+        xOffset -= leftOffset * width;
+        var yOffset = row * (height * 0.75);
+        var square = new StackPane();
+        square.setMinSize(width, height);
+        square.setMaxSize(width, height);
+        square.setTranslateX(xOffset);
+        square.setTranslateY(yOffset);
+        square.getProperties().put("q", row);
+        square.getProperties().put("s", col);
+        square.getStyleClass().add("hex-tile");
+
+        var circle = new Circle((double) width / 2.7);
+        circle.fillProperty().set(assignHexColorToPaint(model.getSolution()[row][col]));
+
+        var text = new javafx.scene.text.Text();
+        text.textProperty().set(assignHexColorToString(model.getSolution()[row][col]));
+        text.setFill(Color.WHITE);
+        text.setBoundsType(TextBoundsType.VISUAL);
+
+        square.getChildren().addAll(circle, text);
+
+        square.setOnMouseClicked(this::handleMouseClickOnHex);
+        return square;
+    }
+
+    private StackPane createInteractiveHex(int row, int col, double leftOffset) {
         var modelHex = model.getHexProperty(row, col);
         if (modelHex.get() == HexColor.NONE) {
             return null;
@@ -70,8 +115,7 @@ public class SpinHexController {
         text.setFill(Color.WHITE);
         text.setBoundsType(TextBoundsType.VISUAL);
 
-        square.getChildren().add(circle);
-        square.getChildren().add(text);
+        square.getChildren().addAll(circle, text);
 
         square.setOnMouseClicked(this::handleMouseClickOnHex);
         return square;
@@ -85,13 +129,25 @@ public class SpinHexController {
 
             @Override
             protected Paint computeValue() {
-                return switch (hexColorProperty.get()) {
-                    case NONE -> Color.TRANSPARENT;
-                    case RED -> Color.RED;
-                    case BLUE -> Color.BLUE;
-                    case GREEN -> Color.GREEN;
-                };
+                return assignHexColorToPaint(hexColorProperty.get());
             }
+        };
+    }
+
+    private Paint assignHexColorToPaint(HexColor hexColor){
+        return switch (hexColor) {
+            case NONE -> Color.TRANSPARENT;
+            case RED -> Color.RED;
+            case BLUE -> Color.BLUE;
+            case GREEN -> Color.GREEN;
+        };
+    }
+    private String assignHexColorToString(HexColor hexColor){
+        return switch (hexColor) {
+            case NONE -> "";
+            case RED -> "P";
+            case BLUE -> "K";
+            case GREEN -> "Z";
         };
     }
 
@@ -103,12 +159,7 @@ public class SpinHexController {
 
             @Override
             protected String computeValue() {
-                return switch (hexColorProperty.get()) {
-                    case NONE -> "";
-                    case RED -> "P";
-                    case BLUE -> "K";
-                    case GREEN -> "Z";
-                };
+                return assignHexColorToString(hexColorProperty.get());
             }
         };
     }
@@ -126,7 +177,7 @@ public class SpinHexController {
     }
 
     private void showSelectionPhaseChange(ObservableValue<? extends TwoPhaseActionSelector.Phase> value,
-                                          TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
+            TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
         switch (newPhase) {
             case SELECT_FROM -> {
             }
