@@ -67,6 +67,7 @@ public class SpinHexController {
         stepsLabel.textProperty().bind(model.getStepsProperty().asString("(%d steps taken so far)"));
         usernameLabel.textProperty().bind(username.concat("'s Board"));
         selector.phaseProperty().addListener(this::showSelectionPhaseChange);
+        selector.phaseProperty().addListener(this::winConditionCheck);
     }
 
     private void generateHexGridInPlain(Pane pane, HexGenerator strategy) {
@@ -207,6 +208,15 @@ public class SpinHexController {
             }
             case SELECT_TO -> showRotationSelectionOverlay(selector.getFrom());
             case READY_TO_MOVE -> hideSelection();
+        }
+    }
+
+    private void winConditionCheck(ObservableValue<? extends TwoPhaseActionSelector.Phase> value,
+            TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
+        if (oldPhase == TwoPhaseActionSelector.Phase.READY_TO_MOVE) {
+            if (model.isSolved()) {
+                Logger.info("Congratulations! You solved the puzzle!");
+            }
         }
     }
 
