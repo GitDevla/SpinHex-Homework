@@ -87,8 +87,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     }
 
     @Override
-    public boolean isLegalMove(TwoPhaseAction<AxialPosition, Rotation> axialPositionRotationTwoPhaseAction) {
-        return false;
+    public boolean isLegalMove(TwoPhaseAction<AxialPosition, Rotation> moveAction) {
+        return isLegalToMoveFrom(moveAction.from()) && moveAction.action() != null;
     }
 
     @Override

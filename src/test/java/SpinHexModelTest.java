@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.Test;
-import spinhex.model.AxialPosition;
-import spinhex.model.HexColor;
-import spinhex.model.SpinHexModel;
+import spinhex.model.TwoPhaseActionState.TwoPhaseAction;
+
+import spinhex.model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,8 +52,22 @@ public class SpinHexModelTest {
         assertTrue(board.isLegalToMoveFrom(new AxialPosition(2, 2)));
 
         assertFalse(board.isLegalToMoveFrom(new AxialPosition(0, 2)));
+        assertFalse(board.isLegalToMoveFrom(new AxialPosition(1, 1)));
         assertFalse(board.isLegalToMoveFrom(new AxialPosition(0, 0)));
         assertFalse(board.isLegalToMoveFrom(new AxialPosition(4, 4)));
         assertFalse(board.isLegalToMoveFrom(new AxialPosition(2, 0)));
+    }
+
+
+    @Test
+    public void isLegalMove(){
+        var board = new SpinHexModel();
+        assertTrue(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.CLOCKWISE)));
+        assertTrue(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(3, 2), Rotation.COUNTERCLOCKWISE)));
+
+
+        assertFalse(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(0, 0), Rotation.CLOCKWISE)));
+        assertFalse(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(4, 4), Rotation.COUNTERCLOCKWISE)));
+        assertFalse(board.isLegalMove(new TwoPhaseAction<>(new AxialPosition(3, 3), null)));
     }
 }
