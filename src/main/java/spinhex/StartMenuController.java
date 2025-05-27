@@ -17,11 +17,13 @@ public class StartMenuController {
 
     @FXML
     private void startGame(ActionEvent event) throws IOException {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Parent root = FXMLLoader.load(getClass().getResource("/game.fxml"));
-        SpinHexController controller = new SpinHexController();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/game.fxml"));
+        Parent root = loader.load();
+
+        SpinHexController controller = loader.getController();
         controller.setUsername(usernameField.getText());
 
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setTitle("SpinHex Game");
         stage.setScene(new Scene(root));
         stage.show();

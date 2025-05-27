@@ -2,8 +2,11 @@ package spinhex;
 
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -24,7 +27,13 @@ public class SpinHexController {
 
     private static final int HEX_SIZE = 80;
 
-    private String username;
+    private ReadOnlyStringWrapper username = new ReadOnlyStringWrapper("Anonymous");
+
+    @FXML
+    private Label usernameLabel;
+
+    @FXML
+    private Label stepsLabel;
 
     @FXML
     private Pane gamePane;
@@ -44,14 +53,19 @@ public class SpinHexController {
     private final JFXTwoPhaseActionSelector<AxialPosition, Rotation> selector = new JFXTwoPhaseActionSelector<>(model);
 
     public void setUsername(String username) {
-        this.username = username;
-        Logger.info("Username set to: {}", username);
+        this.username.set(username);
+        if (username == null || username.isBlank()) {
+            this.username.set("Anonymous");
+        }
+        Logger.info("Username set to: {}", this.username.get());
     }
 
     @FXML
     private void initialize() {
         generateHexGridInPlain(gamePane, this::createInteractiveHex);
         generateHexGridInPlain(solutionPane, this::createMockHex);
+        stepsLabel.textProperty().bind(model.getStepsProperty().asString("(%d steps taken so far)"));
+        usernameLabel.textProperty().bind(username.concat("'s Board"));
         selector.phaseProperty().addListener(this::showSelectionPhaseChange);
     }
 
