@@ -30,6 +30,10 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         return sb.toString();
     }
 
+    public boolean isInBounds(AxialPosition position) {
+        return position.q() >= 0 && position.q() < BOARD_SIZE &&
+                position.s() >= 0 && position.s() < BOARD_SIZE;
+    }
 
     @Override
     public boolean isLegalToMoveFrom(AxialPosition from) {
