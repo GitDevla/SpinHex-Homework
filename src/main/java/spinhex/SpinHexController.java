@@ -10,6 +10,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import jfxutils.JFXTwoPhaseActionSelector;
 import jfxutils.TwoPhaseActionSelector;
@@ -21,70 +22,89 @@ import org.tinylog.Logger;
 
 public class SpinHexController {
 
+    private static final int HEX_SIZE = 80;
+
     @FXML
     private Pane gamePane;
 
     @FXML
     private Pane solutionPane;
 
-    private final SpinHexModel model = new SpinHexModel();
+    private final SpinHexModel model = new SpinHexModel(new HexColor[][] {
+            { HexColor.NONE, HexColor.RED, HexColor.RED },
+            { HexColor.RED, HexColor.GREEN, HexColor.RED },
+            { HexColor.BLUE, HexColor.RED, HexColor.NONE }
+    },new HexColor[][] {
+            { HexColor.NONE, HexColor.BLUE, HexColor.RED },
+            { HexColor.RED, HexColor.GREEN, HexColor.RED },
+            { HexColor.RED, HexColor.RED, HexColor.NONE }
+    });
     private final JFXTwoPhaseActionSelector<AxialPosition, Rotation> selector = new JFXTwoPhaseActionSelector<>(model);
 
     @FXML
     private void initialize() {
-        double offsetStart = (double) (model.BOARD_SIZE - 1) / 4;
-        for (var i = 0; i < model.BOARD_SIZE; i++) {
-            for (var j = 0; j < model.BOARD_SIZE; j++) {
-                var newHex = createInteractiveHex(i, j, offsetStart);
-                if (newHex == null)
-                    continue;
-                gamePane.getChildren().add(newHex);
-            }
-            offsetStart -= 0.5;
-        }
-        offsetStart = (double) (model.BOARD_SIZE - 1) / 4;
-        for (var i = 0; i < model.BOARD_SIZE; i++) {
-            for (var j = 0; j < model.BOARD_SIZE; j++) {
-                var newHex = createMockHex(i, j, offsetStart);
-                if (newHex == null)
-                    continue;
-                solutionPane.getChildren().add(newHex);
-            }
-            offsetStart -= 0.5;
-        }
+        generateHexGridInPlain(gamePane, this::createInteractiveHex);
+        generateHexGridInPlain(solutionPane, this::createMockHex);
         selector.phaseProperty().addListener(this::showSelectionPhaseChange);
     }
+
+    private void generateHexGridInPlain(Pane pane,HexGenerator strategy){
+        var offsetStart = (double) (model.BOARD_SIZE - 1) / 4;
+        for (var i = 0; i < model.BOARD_SIZE; i++) {
+            for (var j = 0; j < model.BOARD_SIZE; j++) {
+                var newHex = strategy.create(i, j, offsetStart);
+                if (newHex == null)
+                    continue;
+                pane.getChildren().add(newHex);
+            }
+            offsetStart -= 0.5;
+        }
+    }
+
+    @FunctionalInterface
+    private interface HexGenerator {
+        StackPane create(int row, int col, double leftOffset);
+    }
+
+    private StackPane createHexContainer(int row,int col,double leftOffset){
+        double xOffset = col * HEX_SIZE;
+        xOffset -= leftOffset * HEX_SIZE;
+        var yOffset = row * (HEX_SIZE * 0.75);
+        var square = new StackPane();
+        square.setMinSize(HEX_SIZE, HEX_SIZE);
+        square.setMaxSize(HEX_SIZE, HEX_SIZE);
+        square.setTranslateX(xOffset);
+        square.setTranslateY(yOffset);
+        square.getProperties().put("q", row);
+        square.getProperties().put("s", col);
+        square.getStyleClass().add("hex-tile");
+        return  square;
+    }
+
+    private Circle createHexCircle() {
+        return new Circle(HEX_SIZE / 2.7);
+    }
+
+    private Text createHexText() {
+        Text text = new Text();
+        text.setFill(Color.WHITE);
+        text.setBoundsType(TextBoundsType.VISUAL);
+        return text;
+    }
+
 
     private StackPane createMockHex(int row, int col, double leftOffset) {
         var modelHex = model.getHexProperty(row, col);
         if (modelHex.get() == HexColor.NONE) {
             return null;
         }
-        var width = 80;
-        var height = 80;
-        double xOffset = col * width;
-        xOffset -= leftOffset * width;
-        var yOffset = row * (height * 0.75);
-        var square = new StackPane();
-        square.setMinSize(width, height);
-        square.setMaxSize(width, height);
-        square.setTranslateX(xOffset);
-        square.setTranslateY(yOffset);
-        square.getProperties().put("q", row);
-        square.getProperties().put("s", col);
-        square.getStyleClass().add("hex-tile");
 
-        var circle = new Circle((double) width / 2.7);
+        var square = createHexContainer(row,col,leftOffset);
+        var circle = createHexCircle();
         circle.fillProperty().set(assignHexColorToPaint(model.getSolution()[row][col]));
-
-        var text = new javafx.scene.text.Text();
+        var text = createHexText();
         text.textProperty().set(assignHexColorToString(model.getSolution()[row][col]));
-        text.setFill(Color.WHITE);
-        text.setBoundsType(TextBoundsType.VISUAL);
-
         square.getChildren().addAll(circle, text);
-
-        square.setOnMouseClicked(this::handleMouseClickOnHex);
         return square;
     }
 
@@ -93,30 +113,13 @@ public class SpinHexController {
         if (modelHex.get() == HexColor.NONE) {
             return null;
         }
-        var width = 80;
-        var height = 80;
-        double xOffset = col * width;
-        xOffset -= leftOffset * width;
-        var yOffset = row * (height * 0.75);
-        var square = new StackPane();
-        square.setMinSize(width, height);
-        square.setMaxSize(width, height);
-        square.setTranslateX(xOffset);
-        square.setTranslateY(yOffset);
-        square.getProperties().put("q", row);
-        square.getProperties().put("s", col);
-        square.getStyleClass().add("hex-tile");
 
-        var circle = new Circle((double) width / 2.7);
+        var square = createHexContainer(row,col,leftOffset);
+        var circle = createHexCircle();
         circle.fillProperty().bind(createHexBindingColor(modelHex));
-
-        var text = new javafx.scene.text.Text();
+        var text = createHexText();
         text.textProperty().bind(createHexBindingString(modelHex));
-        text.setFill(Color.WHITE);
-        text.setBoundsType(TextBoundsType.VISUAL);
-
         square.getChildren().addAll(circle, text);
-
         square.setOnMouseClicked(this::handleMouseClickOnHex);
         return square;
     }
