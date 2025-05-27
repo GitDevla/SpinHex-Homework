@@ -1,6 +1,7 @@
 package spinhex.model;
 
 import puzzle.State;
+import puzzle.solver.BreadthFirstSearch;
 
 import java.util.*;
 
@@ -23,6 +24,13 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             {HexColor.RED, HexColor.BLUE, HexColor.BLUE, HexColor.RED, HexColor.NONE},
             {HexColor.GREEN, HexColor.RED, HexColor.GREEN, HexColor.NONE, HexColor.NONE}
     };
+//    private static final HexColor[][] solvedBoard = {
+//            {HexColor.NONE, HexColor.NONE, HexColor.RED, HexColor.RED, HexColor.RED},
+//            {HexColor.NONE, HexColor.GREEN, HexColor.BLUE, HexColor.RED, HexColor.RED},
+//            {HexColor.BLUE, HexColor.GREEN, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE},
+//            {HexColor.BLUE, HexColor.BLUE, HexColor.RED, HexColor.GREEN, HexColor.NONE},
+//            {HexColor.GREEN, HexColor.GREEN, HexColor.GREEN, HexColor.NONE, HexColor.NONE}
+//    };
 
     private final HashSet<TwoPhaseAction<AxialPosition, Rotation>> legalMoves;
 
@@ -159,8 +167,17 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     }
 
     public static void main(String[] args) {
-        var model = new SpinHexModel();
+        SpinHexModel model = new SpinHexModel();
+        model.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), Rotation.CLOCKWISE));
+        model.makeMove(new TwoPhaseAction<>(new AxialPosition(3, 2), Rotation.CLOCKWISE));
+        model.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 2), Rotation.CLOCKWISE));
+        model.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 3), Rotation.CLOCKWISE));
+        model.makeMove(new TwoPhaseAction<>(new AxialPosition(3, 2), Rotation.COUNTERCLOCKWISE));
         System.out.println(model);
+        System.out.println(model.isSolved());
+
+         new BreadthFirstSearch<TwoPhaseAction<AxialPosition,Rotation>>()
+                 .solveAndPrintSolution(new SpinHexModel());
     }
 
     @Override
