@@ -17,6 +17,7 @@ import spinhex.model.AxialPosition;
 import spinhex.model.HexColor;
 import spinhex.model.Rotation;
 import spinhex.model.SpinHexModel;
+import org.tinylog.Logger;
 
 public class SpinHexController {
 
@@ -117,6 +118,7 @@ public class SpinHexController {
         var hex = (StackPane) event.getSource();
         var q = (int) hex.getProperties().get("q");
         var s = (int) hex.getProperties().get("s");
+        Logger.info("Clicked on hex at position: ({}, {})", q, s);
         selector.select(new AxialPosition(q, s));
         if (selector.isReadyToMove()) {
             selector.reset();
@@ -164,6 +166,8 @@ public class SpinHexController {
         clockwise.setOnMouseClicked(e -> {
             selector.select(Rotation.CLOCKWISE);
             if (selector.isReadyToMove()) {
+                Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getTo());
+
                 selector.makeMove();
             }
             e.consume();
@@ -175,6 +179,7 @@ public class SpinHexController {
         counterClockwise.setOnMouseClicked(e -> {
             selector.select(Rotation.COUNTERCLOCKWISE);
             if (selector.isReadyToMove()) {
+                Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getTo());
                 selector.makeMove();
             }
             e.consume();
