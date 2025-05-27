@@ -15,6 +15,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             new AxialPosition(1, -1), // Down-Left
             new AxialPosition(0, -1)  // Left
     };
+    
+    private final HashSet<TwoPhaseAction<AxialPosition, Rotation>> legalMoves;
 
     public SpinHexModel() {
         board = new HexColor[][]{
@@ -24,6 +26,15 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
                 {HexColor.BLUE, HexColor.GREEN, HexColor.GREEN, HexColor.GREEN, HexColor.NONE},
                 {HexColor.GREEN, HexColor.GREEN, HexColor.GREEN, HexColor.NONE, HexColor.NONE}
         };
+        legalMoves = new HashSet<>();
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (isLegalToMoveFrom(new AxialPosition(i, j))) {
+                    legalMoves.add(new TwoPhaseAction<>(new AxialPosition(i, j), Rotation.CLOCKWISE));
+                    legalMoves.add(new TwoPhaseAction<>(new AxialPosition(i, j), Rotation.COUNTERCLOCKWISE));
+                }
+            }
+        }
     }
 
     @Override
@@ -75,7 +86,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     @Override
     public Set<TwoPhaseAction<AxialPosition, Rotation>> getLegalMoves() {
-        return Set.of();
+        return Collections.unmodifiableSet(legalMoves);
     }
 
     @Override
@@ -103,7 +114,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         switch (axialPositionRotationTwoPhaseAction.action()) {
             case CLOCKWISE -> rotateClockwise(axialPositionRotationTwoPhaseAction.from());
             case COUNTERCLOCKWISE -> rotateCounterClockwise(axialPositionRotationTwoPhaseAction.from());
-            default -> throw new IllegalArgumentException("Invalid rotation action: " + axialPositionRotationTwoPhaseAction.action());
+            default ->
+                    throw new IllegalArgumentException("Invalid rotation action: " + axialPositionRotationTwoPhaseAction.action());
         }
     }
 
