@@ -15,7 +15,15 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             new AxialPosition(1, -1), // Down-Left
             new AxialPosition(0, -1)  // Left
     };
-    
+
+    private static final HexColor[][] solvedBoard = {
+            {HexColor.NONE, HexColor.NONE, HexColor.GREEN, HexColor.RED, HexColor.GREEN},
+            {HexColor.NONE, HexColor.RED, HexColor.BLUE, HexColor.BLUE, HexColor.RED},
+            {HexColor.GREEN, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE, HexColor.GREEN},
+            {HexColor.RED, HexColor.BLUE, HexColor.BLUE, HexColor.RED, HexColor.NONE},
+            {HexColor.GREEN, HexColor.RED, HexColor.GREEN, HexColor.NONE, HexColor.NONE}
+    };
+
     private final HashSet<TwoPhaseAction<AxialPosition, Rotation>> legalMoves;
 
     public SpinHexModel() {
@@ -81,7 +89,14 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     @Override
     public boolean isSolved() {
-        return false;
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (board[i][j] != solvedBoard[i][j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
