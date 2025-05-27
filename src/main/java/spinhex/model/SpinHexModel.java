@@ -35,6 +35,13 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
                 position.s() >= 0 && position.s() < BOARD_SIZE;
     }
 
+    public HexColor getHex(AxialPosition position) {
+        if (!isInBounds(position)) {
+            throw new IllegalArgumentException("Position out of bounds: " + position);
+        }
+        return board[position.q()][position.s()];
+    }
+
     @Override
     public boolean isLegalToMoveFrom(AxialPosition from) {
         return false;

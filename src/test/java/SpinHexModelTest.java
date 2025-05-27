@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 import spinhex.model.AxialPosition;
+import spinhex.model.HexColor;
 import spinhex.model.SpinHexModel;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,5 +17,17 @@ public class SpinHexModelTest {
         assertFalse(board.isInBounds(new AxialPosition(0, -1)));
         assertFalse(board.isInBounds(new AxialPosition(5, 0)));
         assertFalse(board.isInBounds(new AxialPosition(0, 5)));
+    }
+
+    @Test
+    public void testGetHex() {
+        var board = new SpinHexModel();
+        assertEquals(HexColor.NONE, board.getHex(new AxialPosition(0, 0)));
+        assertEquals(HexColor.RED, board.getHex(new AxialPosition(0, 2)));
+        assertEquals(HexColor.BLUE, board.getHex(new AxialPosition(2, 0)));
+        assertEquals(HexColor.GREEN, board.getHex(new AxialPosition(4, 1)));
+
+        assertThrows(IllegalArgumentException.class, () -> board.getHex(new AxialPosition(-1, 0)));
+        assertThrows(IllegalArgumentException.class, () -> board.getHex(new AxialPosition(5, 5)));
     }
 }
