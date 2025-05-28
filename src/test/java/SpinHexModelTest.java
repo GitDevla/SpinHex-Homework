@@ -180,4 +180,29 @@ public class SpinHexModelTest {
         assertEquals(property.get(), HexColor.BLUE);
         assertThrows(IllegalArgumentException.class, () -> board.getHexProperty(-1, 0));
     }
+
+    @Test
+    public void testHashCode() {
+        var board1 = new SpinHexModel(smallBoardStart, smallBoardTarget);
+        var board2 = new SpinHexModel(smallBoardStart, smallBoardTarget);
+        assertEquals(board1.hashCode(), board2.hashCode());
+
+        board1.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1), Rotation.CLOCKWISE));
+        assertNotEquals(board1.hashCode(), board2.hashCode());
+    }
+
+    @Test
+    public void testHashCode2() {
+        var fullRedBoard = new HexColor[3][3];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                fullRedBoard[i][j] = HexColor.RED;
+            }
+        }
+        var board = new SpinHexModel(fullRedBoard, smallBoardTarget);
+        var copy = board.clone();
+        assertEquals(board.hashCode(), copy.hashCode());
+        board.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1), Rotation.CLOCKWISE));
+        assertEquals(board.hashCode(), copy.hashCode());
+    }
 }
