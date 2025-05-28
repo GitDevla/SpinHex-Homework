@@ -372,7 +372,13 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public int hashCode() {
-        return Arrays.deepHashCode(board);
+int result = 1;
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                result = 31 * result + board[i][j].getValue().ordinal();
+            }
+        }
+        return result;
     }
 
     public static void main(String[] args) {
