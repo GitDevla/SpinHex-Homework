@@ -21,8 +21,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
  * The puzzle has the following key features:
  * <p>
  * <ul>
- * <li>A 5x5 board with hexagonal cells, some of which are empty</li>
- * <li>Three possible colors for hexes: RED, GREEN, and BLUE</li>
+ * <li>A NxN board with colored hexagonal cells</li>
  * <li>Moves involve selecting a hex and rotating its neighbors either clockwise
  * or counterclockwise</li>
  * <li>A hex can only be selected if it is colored and all of its neighbors are
