@@ -38,7 +38,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     public final int BOARD_SIZE;
 
-    private final ReadOnlyObjectWrapper<HexColor>[][] board;
+    private ReadOnlyObjectWrapper<HexColor>[][] board;
 
     private ReadOnlyIntegerWrapper steps = new ReadOnlyIntegerWrapper(0);
 
