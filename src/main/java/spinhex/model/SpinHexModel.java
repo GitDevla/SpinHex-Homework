@@ -33,7 +33,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
  * to query and manipulate the state according to the game rules.
  */
 public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation> {
-    /*
+    /**
      * The size of the SpinHex board.
      */
     public final int BOARD_SIZE;
