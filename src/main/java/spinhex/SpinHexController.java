@@ -6,6 +6,10 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -15,6 +19,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
+import javafx.stage.Stage;
 import jfxutils.JFXTwoPhaseActionSelector;
 import jfxutils.TwoPhaseActionSelector;
 import spinhex.model.AxialPosition;
@@ -22,6 +27,8 @@ import spinhex.model.HexColor;
 import spinhex.model.Rotation;
 import spinhex.model.SpinHexModel;
 import org.tinylog.Logger;
+
+import java.io.IOException;
 
 public class SpinHexController {
 
@@ -215,9 +222,34 @@ public class SpinHexController {
             TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
         if (oldPhase == TwoPhaseActionSelector.Phase.READY_TO_MOVE) {
             if (model.isSolved()) {
-                Logger.info("Congratulations! You solved the puzzle!");
+                Logger.info("Puzzle solved by: {}", username.get());
+                showCongratulationsPopup();
+                switchSceneToStartMenu();
             }
         }
+    }
+
+    private void switchSceneToStartMenu() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/start.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) gamePane.getScene().getWindow();
+            stage.setTitle("SpinHex Game");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            Logger.error("Failed to switch to start menu: {}", e.getMessage());
+        }
+    }
+
+    private void showCongratulationsPopup() {
+        var popup = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+        popup.setTitle("Congratulations!");
+        popup.setHeaderText("You solved the puzzle!");
+        popup.setContentText(
+                "Well done, " + username.get() + "! You solved it in " + model.getStepsProperty().get() + " steps.");
+        popup.showAndWait();
     }
 
     private void hideSelection() {
