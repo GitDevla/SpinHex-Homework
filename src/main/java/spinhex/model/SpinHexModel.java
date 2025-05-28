@@ -40,7 +40,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     private final ReadOnlyObjectWrapper<HexColor>[][] board;
 
-    private final ReadOnlyIntegerWrapper steps = new ReadOnlyIntegerWrapper(0);
+    private ReadOnlyIntegerWrapper steps = new ReadOnlyIntegerWrapper(0);
 
     private static final AxialPosition[] DIRECTIONS = {
             new AxialPosition(-1, 0), // Up
@@ -311,8 +311,9 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
                 board[i][j] = this.board[i][j].getValue();
             }
         }
-
-        return new SpinHexModel(board, solvedBoard);
+        var copy = new SpinHexModel(board, solvedBoard);
+        copy.steps = new ReadOnlyIntegerWrapper(this.steps.get());
+        return copy;
     }
 
     /**
