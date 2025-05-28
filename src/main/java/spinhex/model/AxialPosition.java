@@ -45,14 +45,4 @@ public record AxialPosition(int q, int s) {
     public AxialPosition subtract(AxialPosition other) {
         return new AxialPosition(this.q - other.q, this.s - other.s);
     }
-
-    /**
-     * Checks whether this position is equal to another position.
-     *
-     * @param other The position to compare with
-     * @return true if the positions are equal, false otherwise
-     */
-    public boolean isEqual(AxialPosition other) {
-        return this.q == other.q && this.s == other.s;
-    }
 }
