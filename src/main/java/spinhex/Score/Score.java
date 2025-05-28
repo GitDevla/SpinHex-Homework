@@ -1,6 +1,7 @@
 package spinhex.Score;
 
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 /**
  * Represents a score in the game, associating a username with a numeric score.
@@ -45,5 +46,37 @@ public class Score {
      */
     public int getScore() {
         return score;
+    }
+
+    /**
+     * Compares this Score object with the specified object for equality.
+     * Two {@code Score} objects are considered equal if they have the same
+     * username and score.
+     *
+     * @param o the object to compare this Score against
+     * @return {@code true} if the given object represents a Score equivalent to
+     *         this Score,
+     *         {@code false} otherwise
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Score score1 = (Score) o;
+        return score == score1.score && Objects.equals(username, score1.username);
+    }
+
+    /**
+     * Returns a hash code value for this Score object.
+     * The hash code is computed based on the username and score.
+     *
+     * @return a hash code value for this Score
+     */
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(username);
+        result = 31 * result + score;
+        return result;
     }
 }
