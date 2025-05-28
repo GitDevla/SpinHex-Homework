@@ -238,7 +238,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public HashSet<TwoPhaseAction<AxialPosition, Rotation>> getLegalMoves() {
-        System.out.println(steps);
         return new HashSet<>(legalMovesMemo.get(BOARD_SIZE));
     }
 
