@@ -53,7 +53,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     private final HexColor[][] solvedBoard;
 
-    private final HashSet<TwoPhaseAction<AxialPosition, Rotation>> legalMoves;
+    private static final HashMap<Integer,HashSet<TwoPhaseAction<AxialPosition, Rotation>>> legalMovesMemo = new HashMap<>();
 
     /**
      * Constructs a new {@code SpinHexModel} with the initial board configuration.
@@ -92,7 +92,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             }
         }
         this.solvedBoard = targetBoard;
-        legalMoves = generateLegalMoves();
+        if (!legalMovesMemo.containsKey(BOARD_SIZE))
+            legalMovesMemo.put(BOARD_SIZE,generateLegalMoves());
     }
 
     /**
@@ -237,7 +238,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public HashSet<TwoPhaseAction<AxialPosition, Rotation>> getLegalMoves() {
-        return new HashSet<>(legalMoves);
+        System.out.println(steps);
+        return new HashSet<>(legalMovesMemo.get(BOARD_SIZE));
     }
 
     /**
@@ -367,7 +369,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public int hashCode() {
-int result = 1;
+        int result = 1;
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 result = 31 * result + board[i][j].getValue().ordinal();
