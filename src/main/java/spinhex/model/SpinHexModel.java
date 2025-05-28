@@ -264,10 +264,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public void makeMove(TwoPhaseAction<AxialPosition, Rotation> moveAction) {
-        if (!isLegalMove(moveAction)) {
-            throw new IllegalArgumentException("Illegal move: " + moveAction);
-        }
-
         switch (moveAction.action()) {
             case CLOCKWISE -> rotateClockwise(moveAction.from());
             case COUNTERCLOCKWISE -> rotateCounterClockwise(moveAction.from());
