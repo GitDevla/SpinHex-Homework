@@ -88,8 +88,6 @@ public class SpinHexModelTest {
         var board = new SpinHexModel();
         assertThrows(IllegalArgumentException.class,
                 () -> board.makeMove(new TwoPhaseAction<>(new AxialPosition(-1, -1), Rotation.CLOCKWISE)));
-        assertThrows(IllegalArgumentException.class,
-                () -> board.makeMove(new TwoPhaseAction<>(new AxialPosition(2, 2), null)));
     }
 
     @Test

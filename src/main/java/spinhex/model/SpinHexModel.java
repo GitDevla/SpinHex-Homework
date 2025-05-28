@@ -271,7 +271,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         switch (moveAction.action()) {
             case CLOCKWISE -> rotateClockwise(moveAction.from());
             case COUNTERCLOCKWISE -> rotateCounterClockwise(moveAction.from());
-            default -> throw new IllegalArgumentException("Invalid rotation action: " + moveAction.action());
         }
         steps.set(steps.get() + 1);
     }
