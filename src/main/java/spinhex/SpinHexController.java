@@ -22,6 +22,8 @@ import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import jfxutils.JFXTwoPhaseActionSelector;
 import jfxutils.TwoPhaseActionSelector;
+import spinhex.Score.Score;
+import spinhex.Score.ScoreManager;
 import spinhex.model.AxialPosition;
 import spinhex.model.HexColor;
 import spinhex.model.Rotation;
@@ -29,6 +31,7 @@ import spinhex.model.SpinHexModel;
 import org.tinylog.Logger;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class SpinHexController {
 
@@ -223,10 +226,23 @@ public class SpinHexController {
         if (oldPhase == TwoPhaseActionSelector.Phase.READY_TO_MOVE) {
             if (model.isSolved()) {
                 Logger.info("Puzzle solved by: {}", username.get());
+                saveScore();
                 showCongratulationsPopup();
                 switchSceneToStartMenu();
             }
         }
+    }
+
+    private void saveScore() {
+        try {
+            ScoreManager scoreManager = new ScoreManager(Path.of("scores.json"));
+            scoreManager.add(new Score(username.get(), model.getSteps()));
+            Logger.info("Score saved for user: {}", username.get());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Logger.error("Failed to save score: {}", e.getMessage());
+        }
+
     }
 
     private void switchSceneToStartMenu() {
