@@ -306,14 +306,21 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public State<TwoPhaseAction<AxialPosition, Rotation>> clone() {
-        HexColor[][] board = new HexColor[BOARD_SIZE][BOARD_SIZE];
+        SpinHexModel copy;
+        try {
+            copy = (SpinHexModel) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(e);
+        }
+        copy.board = new ReadOnlyObjectWrapper[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                board[i][j] = this.board[i][j].getValue();
+                copy.board[i][j] = new ReadOnlyObjectWrapper<>(board[i][j].getValue());
             }
         }
-        var copy = new SpinHexModel(board, solvedBoard);
+
         copy.steps = new ReadOnlyIntegerWrapper(this.steps.get());
+
         return copy;
     }
 
