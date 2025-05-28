@@ -6,14 +6,13 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="470.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="spinhex.StartMenuController">
    <children>
       <Button fx:id="startButton" layoutX="51.0" layoutY="282.0" mnemonicParsing="false" onAction="#startGame" prefHeight="25.0" prefWidth="154.0" text="Start" />
       <TableView fx:id="scoreTable" layoutX="256.0" layoutY="32.0" prefHeight="336.0" prefWidth="200.0">
         <columns>
-          <TableColumn prefWidth="136.0" text="C1" />
-          <TableColumn prefWidth="63.0" text="C2" />
+          <TableColumn fx:id="usernameCol" prefWidth="136.0" text="Username" />
+          <TableColumn fx:id="scoreCol" prefWidth="63.0" text="Score" />
         </columns>
       </TableView>
       <TextField fx:id="usernameField" layoutX="16.0" layoutY="235.0" prefHeight="25.0" prefWidth="223.0" promptText="Username" />
