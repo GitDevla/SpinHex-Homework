@@ -1,6 +1,7 @@
 package spinhex;
 
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -9,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -49,11 +51,11 @@ public class SpinHexController {
 
     private ReadOnlyIntegerWrapper steps = new ReadOnlyIntegerWrapper(0);
 
-    private final ReadOnlySpinHexModelWrapper model = new ReadOnlySpinHexModelWrapper(new HexColor[][] {
+    private final ReadOnlySpinHexModelWrapper model = new ReadOnlySpinHexModelWrapper(new Byte[][] {
             { HexColor.NONE, HexColor.RED, HexColor.RED },
             { HexColor.RED, HexColor.GREEN, HexColor.RED },
             { HexColor.BLUE, HexColor.RED, HexColor.NONE }
-    }, new HexColor[][] {
+    }, new Byte[][] {
             { HexColor.NONE, HexColor.BLUE, HexColor.RED },
             { HexColor.RED, HexColor.GREEN, HexColor.RED },
             { HexColor.RED, HexColor.RED, HexColor.NONE }
@@ -153,7 +155,7 @@ public class SpinHexController {
         return square;
     }
 
-    private ObjectBinding<Paint> createHexBindingColor(ReadOnlyObjectProperty<HexColor> hexColorProperty) {
+    private ObjectBinding<Paint> createHexBindingColor(ReadOnlyIntegerProperty hexColorProperty) {
         return new ObjectBinding<Paint>() {
             {
                 super.bind(hexColorProperty);
@@ -161,30 +163,32 @@ public class SpinHexController {
 
             @Override
             protected Paint computeValue() {
-                return assignHexColorToPaint(hexColorProperty.get());
+                return assignHexColorToPaint((byte) hexColorProperty.get());
             }
         };
     }
 
-    private Paint assignHexColorToPaint(HexColor hexColor) {
+    private Paint assignHexColorToPaint(Byte hexColor) {
         return switch (hexColor) {
-            case NONE -> Color.TRANSPARENT;
-            case RED -> Color.RED;
-            case BLUE -> Color.BLUE;
-            case GREEN -> Color.GREEN;
+            case HexColor.NONE -> Color.TRANSPARENT;
+            case HexColor.RED -> Color.RED;
+            case HexColor.BLUE -> Color.BLUE;
+            case HexColor.GREEN -> Color.GREEN;
+            default -> throw new IllegalStateException("Unexpected value: " + hexColor);
         };
     }
 
-    private String assignHexColorToString(HexColor hexColor) {
+    private String assignHexColorToString(Byte hexColor) {
         return switch (hexColor) {
-            case NONE -> "";
-            case RED -> "P";
-            case BLUE -> "K";
-            case GREEN -> "Z";
+            case HexColor.NONE -> "";
+            case HexColor.RED -> "P";
+            case HexColor.BLUE -> "K";
+            case HexColor.GREEN -> "Z";
+            default -> throw new IllegalStateException("Unexpected value: " + hexColor);
         };
     }
 
-    private ObjectBinding<String> createHexBindingString(ReadOnlyObjectProperty<HexColor> hexColorProperty) {
+    private ObjectBinding<String> createHexBindingString(ReadOnlyIntegerProperty hexColorProperty) {
         return new ObjectBinding<String>() {
             {
                 super.bind(hexColorProperty);
@@ -192,7 +196,7 @@ public class SpinHexController {
 
             @Override
             protected String computeValue() {
-                return assignHexColorToString(hexColorProperty.get());
+                return assignHexColorToString((byte) hexColorProperty.get());
             }
         };
     }
@@ -258,7 +262,7 @@ public class SpinHexController {
     }
 
     private void showCongratulationsPopup() {
-        var popup = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+        var popup = new Alert(Alert.AlertType.INFORMATION);
         popup.setTitle("Congratulations!");
         popup.setHeaderText("You solved the puzzle!");
         popup.setContentText(

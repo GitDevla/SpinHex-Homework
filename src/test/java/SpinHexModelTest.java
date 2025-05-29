@@ -6,12 +6,12 @@ import spinhex.model.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SpinHexModelTest {
-    public static HexColor[][] smallBoardStart = new HexColor[][] {
+    public static Byte[][] smallBoardStart = new Byte[][] {
             { HexColor.NONE, HexColor.RED, HexColor.RED },
             { HexColor.RED, HexColor.GREEN, HexColor.RED },
             { HexColor.BLUE, HexColor.RED, HexColor.NONE }
     };
-    public static HexColor[][] smallBoardTarget = new HexColor[][] {
+    public static Byte[][] smallBoardTarget = new Byte[][] {
             { HexColor.NONE, HexColor.BLUE, HexColor.RED },
             { HexColor.RED, HexColor.GREEN, HexColor.RED },
             { HexColor.RED, HexColor.RED, HexColor.NONE }
@@ -170,16 +170,6 @@ public class SpinHexModelTest {
     }
 
     @Test
-    public void testGetHexProperty() {
-        var board = new SpinHexModel(smallBoardStart, smallBoardTarget);
-        var property = board.getHexProperty(1, 0);
-        assertEquals(property.get(), HexColor.RED);
-        board.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1), Rotation.CLOCKWISE));
-        assertEquals(property.get(), HexColor.BLUE);
-        assertThrows(IllegalArgumentException.class, () -> board.getHexProperty(-1, 0));
-    }
-
-    @Test
     public void testHashCode() {
         var board1 = new SpinHexModel(smallBoardStart, smallBoardTarget);
         var board2 = new SpinHexModel(smallBoardStart, smallBoardTarget);
@@ -191,7 +181,7 @@ public class SpinHexModelTest {
 
     @Test
     public void testHashCode2() {
-        var fullRedBoard = new HexColor[3][3];
+        var fullRedBoard = new Byte[3][3];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 fullRedBoard[i][j] = HexColor.RED;

@@ -1,32 +1,34 @@
 package spinhex.model;
 
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 public class ReadOnlySpinHexModelWrapper extends SpinHexModel {
-    private ReadOnlyObjectWrapper<HexColor>[][] boardProperty;
+    private ReadOnlyIntegerWrapper[][] boardProperty;
 
     public ReadOnlySpinHexModelWrapper() {
         super();
-        boardProperty = new ReadOnlyObjectWrapper[BOARD_SIZE][BOARD_SIZE];
+        boardProperty = new ReadOnlyIntegerWrapper[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                boardProperty[i][j] = new ReadOnlyObjectWrapper<>(board[i][j]);
+                boardProperty[i][j] = new ReadOnlyIntegerWrapper(board[i][j]);
             }
         }
     }
 
-    public ReadOnlySpinHexModelWrapper(HexColor[][] startingBoard, HexColor[][] targetBoard) {
+    public ReadOnlySpinHexModelWrapper(Byte[][] startingBoard, Byte[][] targetBoard) {
         super(startingBoard, targetBoard);
-        boardProperty = new ReadOnlyObjectWrapper[BOARD_SIZE][BOARD_SIZE];
+        boardProperty = new ReadOnlyIntegerWrapper[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                boardProperty[i][j] = new ReadOnlyObjectWrapper<>(board[i][j]);
+                boardProperty[i][j] = new ReadOnlyIntegerWrapper(board[i][j]);
             }
         }
     }
 
-    public ReadOnlyObjectProperty<HexColor> getHexProperty(int q, int s) {
+    public ReadOnlyIntegerProperty getHexProperty(int q, int s) {
         if (!isInBounds(new AxialPosition(q, s))) {
             throw new IllegalArgumentException("Position out of bounds: " + new AxialPosition(q, s));
         }
