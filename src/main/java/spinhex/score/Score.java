@@ -1,6 +1,5 @@
-package spinhex.Score;
+package spinhex.score;
 
-import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**

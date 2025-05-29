@@ -1,10 +1,7 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import spinhex.Score.Score;
-import spinhex.model.TwoPhaseActionState.TwoPhaseAction;
-import spinhex.model.AxialPosition;
-import spinhex.model.*;
-import spinhex.Score.ScoreManager;
+import spinhex.score.Score;
+import spinhex.score.ScoreManager;
 import java.nio.file.*;
 
 import static java.nio.file.Files.deleteIfExists;

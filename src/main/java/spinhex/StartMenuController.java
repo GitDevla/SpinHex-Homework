@@ -13,8 +13,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import spinhex.Score.Score;
-import spinhex.Score.ScoreManager;
+import spinhex.score.Score;
+import spinhex.score.ScoreManager;
 
 import java.io.IOException;
 import java.nio.file.Path;
