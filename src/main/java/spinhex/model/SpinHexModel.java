@@ -35,7 +35,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     public final int BOARD_SIZE;
 
-    protected Byte[][] board;
+    protected byte[][] board;
 
     private static final AxialPosition[] DIRECTIONS = {
             new AxialPosition(-1, 0), // Up
@@ -46,7 +46,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             new AxialPosition(0, -1) // Left
     };
 
-    private final Byte[][] solvedBoard;
+    private final byte[][] solvedBoard;
 
     private static final HashMap<Integer, HashSet<TwoPhaseAction<AxialPosition, Rotation>>> legalMovesMemo = new HashMap<>();
 
@@ -56,13 +56,13 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * empty.
      */
     public SpinHexModel() {
-        this(new Byte[][] {
+        this(new byte[][] {
                 { HexColor.NONE, HexColor.NONE, HexColor.RED, HexColor.RED, HexColor.RED },
                 { HexColor.NONE, HexColor.RED, HexColor.RED, HexColor.RED, HexColor.BLUE },
                 { HexColor.BLUE, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE },
                 { HexColor.BLUE, HexColor.GREEN, HexColor.GREEN, HexColor.GREEN, HexColor.NONE },
                 { HexColor.GREEN, HexColor.GREEN, HexColor.GREEN, HexColor.NONE, HexColor.NONE }
-        }, new Byte[][] {
+        }, new byte[][] {
                 { HexColor.NONE, HexColor.NONE, HexColor.GREEN, HexColor.RED, HexColor.GREEN },
                 { HexColor.NONE, HexColor.RED, HexColor.BLUE, HexColor.BLUE, HexColor.RED },
                 { HexColor.GREEN, HexColor.BLUE, HexColor.BLUE, HexColor.BLUE, HexColor.GREEN },
@@ -78,9 +78,9 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * @param startingBoard The initial configuration of the board.
      * @param targetBoard   The solved configuration of the board.
      */
-    public SpinHexModel(Byte[][] startingBoard, Byte[][] targetBoard) {
+    public SpinHexModel(byte[][] startingBoard, byte[][] targetBoard) {
         BOARD_SIZE = startingBoard.length;
-        board = new Byte[BOARD_SIZE][BOARD_SIZE];
+        board = new byte[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             board[i] = Arrays.copyOf(startingBoard[i], startingBoard[i].length);
         }
@@ -94,7 +94,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * 
      * @return A 2D array representing the solved configuration of the board.
      */
-    public Byte[][] getSolution() {
+    public byte[][] getSolution() {
         return solvedBoard;
     }
 
@@ -270,7 +270,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         } catch (CloneNotSupportedException e) {
             throw new AssertionError(e);
         }
-        copy.board = new Byte[BOARD_SIZE][BOARD_SIZE];
+        copy.board = new byte[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             copy.board[i] = Arrays.copyOf(board[i], board[i].length);
         }
@@ -338,12 +338,12 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     }
 
     public static void main(String[] args) {
-        var smallBoardStart = new Byte[][] {
+        var smallBoardStart = new byte[][] {
                 { HexColor.NONE, HexColor.RED, HexColor.RED },
                 { HexColor.RED, HexColor.GREEN, HexColor.RED },
                 { HexColor.BLUE, HexColor.RED, HexColor.NONE }
         };
-        var smallBoardTarget = new Byte[][] {
+        var smallBoardTarget = new byte[][] {
                 { HexColor.NONE, HexColor.BLUE, HexColor.RED },
                 { HexColor.RED, HexColor.GREEN, HexColor.RED },
                 { HexColor.RED, HexColor.RED, HexColor.NONE }
@@ -355,7 +355,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         System.out.println(model);
         System.out.println(model.isSolved());
 
-        smallBoardStart = new Byte[][] {
+        smallBoardStart = new byte[][] {
                 { HexColor.NONE, HexColor.RED, HexColor.RED },
                 { HexColor.RED, HexColor.GREEN, HexColor.RED },
                 { HexColor.BLUE, HexColor.RED, HexColor.NONE }

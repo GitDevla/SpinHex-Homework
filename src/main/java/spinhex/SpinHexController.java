@@ -51,11 +51,11 @@ public class SpinHexController {
 
     private ReadOnlyIntegerWrapper steps = new ReadOnlyIntegerWrapper(0);
 
-    private final ReadOnlySpinHexModelWrapper model = new ReadOnlySpinHexModelWrapper(new Byte[][] {
+    private final ReadOnlySpinHexModelWrapper model = new ReadOnlySpinHexModelWrapper(new byte[][] {
             { HexColor.NONE, HexColor.RED, HexColor.RED },
             { HexColor.RED, HexColor.GREEN, HexColor.RED },
             { HexColor.BLUE, HexColor.RED, HexColor.NONE }
-    }, new Byte[][] {
+    }, new byte[][] {
             { HexColor.NONE, HexColor.BLUE, HexColor.RED },
             { HexColor.RED, HexColor.GREEN, HexColor.RED },
             { HexColor.RED, HexColor.RED, HexColor.NONE }
