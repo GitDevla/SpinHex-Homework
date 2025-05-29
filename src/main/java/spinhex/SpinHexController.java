@@ -21,12 +21,9 @@ import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import jfxutils.JFXTwoPhaseActionSelector;
 import jfxutils.TwoPhaseActionSelector;
+import spinhex.model.*;
 import spinhex.score.Score;
 import spinhex.score.ScoreManager;
-import spinhex.model.AxialPosition;
-import spinhex.model.HexColor;
-import spinhex.model.Rotation;
-import spinhex.model.SpinHexModel;
 import org.tinylog.Logger;
 
 import java.io.IOException;
@@ -52,7 +49,7 @@ public class SpinHexController {
 
     private ReadOnlyIntegerWrapper steps = new ReadOnlyIntegerWrapper(0);
 
-    private final SpinHexModel model = new SpinHexModel(new HexColor[][] {
+    private final ReadOnlySpinHexModelWrapper model = new ReadOnlySpinHexModelWrapper(new HexColor[][] {
             { HexColor.NONE, HexColor.RED, HexColor.RED },
             { HexColor.RED, HexColor.GREEN, HexColor.RED },
             { HexColor.BLUE, HexColor.RED, HexColor.NONE }
