@@ -283,6 +283,19 @@ public class SpinHexController {
         throw new AssertionError();
     }
 
+    private StackPane createRotationSelectorCircle(String Text) {
+        var stackPane = new StackPane();
+        var circle = new Circle(10);
+        circle.setFill(Color.LIGHTGRAY);
+        var text = new Text(Text);
+        text.setFill(Color.BLACK);
+        text.setBoundsType(TextBoundsType.VISUAL);
+        stackPane.getChildren().addAll(circle, text);
+        stackPane.setMinSize(30, 30);
+        stackPane.setMaxSize(30, 30);
+        return stackPane;
+    }
+
     private void showRotationSelectionOverlay(AxialPosition position) {
         var square = getSquare(position);
         var rotationOverlay = new StackPane();
@@ -292,22 +305,18 @@ public class SpinHexController {
         rotationOverlay.setTranslateX(square.getTranslateX());
         rotationOverlay.setTranslateY(square.getTranslateY());
 
-        var clockwise = new Circle(10);
-        clockwise.setCenterY(0);
-        clockwise.setFill(Color.LIGHTGRAY);
+        var clockwise = createRotationSelectorCircle("⟳");
         clockwise.setTranslateX(15);
         clockwise.setOnMouseClicked(e -> {
             selector.select(Rotation.CLOCKWISE);
             if (selector.isReadyToMove()) {
                 Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getTo());
-
                 selector.makeMove();
             }
             e.consume();
         });
 
-        var counterClockwise = new Circle(10);
-        counterClockwise.setFill(Color.DARKGRAY);
+        var counterClockwise = createRotationSelectorCircle("⟲");
         counterClockwise.setTranslateX(-15);
         counterClockwise.setOnMouseClicked(e -> {
             selector.select(Rotation.COUNTERCLOCKWISE);
