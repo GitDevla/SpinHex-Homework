@@ -40,8 +40,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     private ReadOnlyObjectWrapper<HexColor>[][] board;
 
-    private ReadOnlyIntegerWrapper steps = new ReadOnlyIntegerWrapper(0);
-
     private static final AxialPosition[] DIRECTIONS = {
             new AxialPosition(-1, 0), // Up
             new AxialPosition(-1, 1), // Up-Right
@@ -162,24 +160,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     }
 
     /**
-     * Gets the number of steps taken in the game.
-     * 
-     * @return The number of steps taken.
-     */
-    public int getSteps() {
-        return steps.get();
-    }
-
-    /**
-     * Gets a read-only property representing the number of steps taken.
-     * 
-     * @return A read-only integer property containing the number of steps.
-     */
-    public ReadOnlyIntegerWrapper getStepsProperty() {
-        return steps;
-    }
-
-    /**
      * Gets the neighbors of the hex at the specified position.
      * 
      * @param position The position of the hex.
@@ -269,7 +249,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             case CLOCKWISE -> rotateClockwise(moveAction.from());
             case COUNTERCLOCKWISE -> rotateCounterClockwise(moveAction.from());
         }
-        steps.set(steps.get() + 1);
     }
 
     private void rotateCounterClockwise(AxialPosition from) {
@@ -318,9 +297,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
                 copy.board[i][j] = new ReadOnlyObjectWrapper<>(board[i][j].getValue());
             }
         }
-
-        copy.steps = new ReadOnlyIntegerWrapper(this.steps.get());
-
         return copy;
     }
 

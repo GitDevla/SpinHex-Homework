@@ -1,6 +1,7 @@
 package spinhex;
 
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -51,6 +52,8 @@ public class SpinHexController {
     @FXML
     private Pane solutionPane;
 
+    private ReadOnlyIntegerWrapper steps = new ReadOnlyIntegerWrapper(0);
+
     private final SpinHexModel model = new SpinHexModel(new HexColor[][] {
             { HexColor.NONE, HexColor.RED, HexColor.RED },
             { HexColor.RED, HexColor.GREEN, HexColor.RED },
@@ -74,7 +77,7 @@ public class SpinHexController {
     private void initialize() {
         generateHexGridInPlain(gamePane, this::createInteractiveHex);
         generateHexGridInPlain(solutionPane, this::createMockHex);
-        stepsLabel.textProperty().bind(model.getStepsProperty().asString("(%d steps taken so far)"));
+        stepsLabel.textProperty().bind(steps.asString("(%d steps taken so far)"));
         usernameLabel.textProperty().bind(username.concat("'s Board"));
         selector.phaseProperty().addListener(this::showSelectionPhaseChange);
         selector.phaseProperty().addListener(this::winConditionCheck);
@@ -236,7 +239,7 @@ public class SpinHexController {
     private void saveScore() {
         try {
             ScoreManager scoreManager = new ScoreManager(Path.of("scores.json"));
-            scoreManager.add(new Score(username.get(), model.getSteps()));
+            scoreManager.add(new Score(username.get(), steps.getValue()));
             Logger.info("Score saved for user: {}", username.get());
         } catch (IOException e) {
             e.printStackTrace();
@@ -264,7 +267,7 @@ public class SpinHexController {
         popup.setTitle("Congratulations!");
         popup.setHeaderText("You solved the puzzle!");
         popup.setContentText(
-                "Well done, " + username.get() + "! You solved it in " + model.getStepsProperty().get() + " steps.");
+                "Well done, " + username.get() + "! You solved it in " + steps.get() + " steps.");
         popup.showAndWait();
     }
 
@@ -312,6 +315,7 @@ public class SpinHexController {
             if (selector.isReadyToMove()) {
                 Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getTo());
                 selector.makeMove();
+                steps.setValue(steps.getValue() + 1);
             }
             e.consume();
         });
@@ -323,6 +327,7 @@ public class SpinHexController {
             if (selector.isReadyToMove()) {
                 Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getTo());
                 selector.makeMove();
+                steps.setValue(steps.getValue() + 1);
             }
             e.consume();
         });
