@@ -12,7 +12,7 @@ import java.util.*;
  * hex.
  * The objective is to rotate a group of hexes to match the solved
  * configuration.
- * 
+ *
  * <p>
  * The puzzle has the following key features:
  * <p>
@@ -23,8 +23,8 @@ import java.util.*;
  * <li>A hex can only be selected if it is colored and all of its neighbors are
  * non-empty</li>
  * </ul>
- * 
- * 
+ *
+ *
  * The model keeps track of the current state of the board and provides methods
  * to query and manipulate the state according to the game rules.
  */
@@ -79,24 +79,15 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     public SpinHexModel(byte[][] startingBoard, byte[][] targetBoard) {
         BOARD_SIZE = startingBoard.length;
-        board = new HexagonalGrid(BOARD_SIZE);
-        solvedBoard = new HexagonalGrid(BOARD_SIZE);
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                if (startingBoard[i][j] == HexColor.NONE) {
-                    continue;
-                }
-                board.set(i, j, startingBoard[i][j]);
-                solvedBoard.set(i, j, targetBoard[i][j]);
-            }
-        }
+        board = new HexagonalGrid(startingBoard);
+        solvedBoard = new HexagonalGrid(targetBoard);
         if (!legalMovesMemo.containsKey(BOARD_SIZE))
             legalMovesMemo.put(BOARD_SIZE, generateLegalMoves());
     }
 
     /**
      * Gets the solved configuration of the SpinHex board.
-     * 
+     *
      * @return A 2D array representing the solved configuration of the board.
      */
     public HexagonalGrid getSolution() {
@@ -119,7 +110,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     /**
      * Gets the color of the hex at the specified position.
-     * 
+     *
      * @param position The position of the hex.
      * @return The color of the hex at the specified position.
      * @throws IllegalArgumentException if the position is out of bounds.
@@ -133,12 +124,12 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     /**
      * Gets the neighbors of the hex at the specified position.
-     * 
+     *
      * @param position The position of the hex.
      * @return A list of colors of the neighboring hexes.
      */
     public List<Byte> getNeighbors(AxialPosition position) {
-        List<Byte> neighbors = new ArrayList<>();
+        List<Byte> neighbors = new ArrayList<>(6);
         for (var dir : DIRECTIONS) {
             AxialPosition neighborPos = position.add(dir);
             if (board.isInBounds(neighborPos)) {
@@ -154,41 +145,30 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * Checks if it is legal to move from the specified position.
      * A move is legal if the position is within bounds, the hex at that position
      * is not empty, and all its neighbors are non-empty.
-     * 
+     *
      * @param from The position to check.
      * @return {@code true} if it is legal to move from the specified position,
      *         {@code false} otherwise.
      */
     @Override
     public boolean isLegalToMoveFrom(AxialPosition from) {
-        return board.isInBounds(from) && getHex(from) != HexColor.NONE
-                && getNeighbors(from).stream().noneMatch(color -> color == HexColor.NONE);
+        return board.isInBounds(from) && getNeighbors(from).stream().noneMatch(color -> color == HexColor.NONE);
     }
 
     /**
      * Checks if the puzzle is solved.
      * The puzzle is considered solved if all hexes match the solved configuration.
-     * 
+     *
      * @return {@code true} if the puzzle is solved, {@code false} otherwise.
      */
     @Override
     public boolean isSolved() {
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                if (!board.isInBounds(new AxialPosition(i, j))) {
-                    continue;
-                }
-                if (board.get(i, j) != solvedBoard.get(i, j)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return board.equals(solvedBoard);
     }
 
     /**
      * Gets the set of legal moves available from the current state.
-     * 
+     *
      * @return A set of legal moves.
      */
     @Override
@@ -200,7 +180,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * Checks if the specified move action is legal.
      * A move action is legal if it is possible to move from the specified position
      * and the action is not null.
-     * 
+     *
      * @param moveAction The move action to check.
      * @return {@code true} if the move action is legal, {@code false} otherwise.
      */
@@ -214,7 +194,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * The action must be legal, otherwise an exception is thrown.
      * This method performs the rotation of the hexes around the specified position
      * in the direction specified by the action.
-     * 
+     *
      * @param moveAction The move action to perform.
      * @throws IllegalArgumentException if the move action is illegal.
      */
@@ -254,7 +234,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     /**
      * Creates a clone of the current {@code SpinHexModel} state.
-     * 
+     *
      * @return A new {@code SpinHexModel} instance with the same board
      *         configuration.
      */
@@ -273,7 +253,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     /**
      * Returns a string representation of the {@code SpinHexModel} board.
      * Each hex is represented by its ordinal value, separated by tabs.
-     * 
+     *
      * @return A string representation of the board.
      */
     @Override
@@ -294,7 +274,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * Checks if this {@code SpinHexModel} is equal to another object.
      * Two {@code SpinHexModels} are considered equal if their boards have the same
      * configuration.
-     * 
+     *
      * @param o The object to compare with.
      * @return {@code true} if the objects are equal, {@code false} otherwise.
      */
@@ -311,7 +291,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     /**
      * Returns a hash code value for this {@code SpinHexModel}.
      * The hash code is computed based on the board configuration.
-     * 
+     *
      * @return A hash code value for this {@code SpinHexModel}.
      */
     @Override

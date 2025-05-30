@@ -13,6 +13,17 @@ public final class HexagonalGrid implements Cloneable {
         this.board = new byte[size * size - calulateSavedSize(size)];
     }
 
+    public HexagonalGrid(byte[][] board) {
+        this(board.length);
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (isInBounds(i, j)) {
+                    set(i, j, board[i][j]);
+                }
+            }
+        }
+    }
+
     public void set(int q, int s, byte value) {
         board[calculateIndex(q, s)] = value;
     }
