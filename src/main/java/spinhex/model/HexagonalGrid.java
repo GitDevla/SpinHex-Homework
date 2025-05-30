@@ -14,40 +14,38 @@ public final class HexagonalGrid implements Cloneable {
     }
 
     public void set(int q, int s, byte value) {
-        board[convertToFlat(new AxialPosition(q, s))] = value;
+        board[calculateIndex(q, s)] = value;
     }
 
     public void set(AxialPosition pos, byte value) {
-        board[convertToFlat(pos)] = value;
+        set(pos.q(), pos.s(), value);
     }
 
     public byte get(int q, int s) {
-        return get(new AxialPosition(q, s));
+        if (!isInBounds(q, s))
+            return 0;
+        return board[calculateIndex(q, s)];
+
     }
 
     public byte get(AxialPosition pos) {
-        if (!isInBounds(pos))
-            return 0;
-        return board[convertToFlat(pos)];
+        return get(pos.q(),pos.s());
     }
 
     private int columnOffset(int row) {
         return Math.max(0, RADIUS - row);
     }
 
-    private AxialPosition convertToJaggedPosition(AxialPosition position) {
-        int q = position.q();
-        int s = position.s();
-
-        int newCol = s - columnOffset(q);
-        return new AxialPosition(q, newCol);
+    private int calculateIndex(int q, int s) {
+        s = convertToJaggedPosition(q, s);
+        return convertToFlat(q, s);
     }
 
-    private int convertToFlat(AxialPosition position) {
-        position = convertToJaggedPosition(position);
-        int q = position.q();
-        int s = position.s();
+    private int convertToJaggedPosition(int q, int s) {
+        return s - columnOffset(q);
+    }
 
+    private int convertToFlat(int q, int s) {
         int leftOffset = 0;
         for (int i = 0; i < q; i++) {
             leftOffset += columnOffset(i);
@@ -68,12 +66,15 @@ public final class HexagonalGrid implements Cloneable {
     }
 
     public boolean isInBounds(AxialPosition position) {
-        if (!(position.q() >= 0 && position.q() < SIZE &&
-                position.s() >= 0 && position.s() < SIZE))
+        return isInBounds(position.q(), position.s());
+    }
+
+    public boolean isInBounds(int q, int s) {
+        if (!(q >= 0 && q < SIZE && s >= 0 && s < SIZE))
             return false;
-        if (position.s() < columnOffset(position.q()))
+        if (s < columnOffset(q))
             return false;
-        if (position.s() >= SIZE - columnOffset(SIZE - 1 - position.q()))
+        if (s >= SIZE - columnOffset(SIZE - 1 - q))
             return false;
         return true;
     }
