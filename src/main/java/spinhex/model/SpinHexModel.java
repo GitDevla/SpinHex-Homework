@@ -1,5 +1,6 @@
 package spinhex.model;
 
+import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 import puzzle.State;
 import puzzle.solver.BreadthFirstSearch;
 
@@ -47,7 +48,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     private final HexagonalGrid solvedBoard;
 
-    private static final HashMap<Integer, HashSet<TwoPhaseAction<AxialPosition, Rotation>>> legalMovesMemo = new HashMap<>();
+    private static final HashMap<Integer, UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>>> legalMovesMemo = new HashMap<>();
 
     /**
      * Constructs a new {@code SpinHexModel} with the initial board configuration.
@@ -94,9 +95,10 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         return solvedBoard;
     }
 
-    private HashSet<TwoPhaseAction<AxialPosition, Rotation>> generateLegalMoves() {
-        final HashSet<TwoPhaseAction<AxialPosition, Rotation>> legalMoves;
-        legalMoves = new HashSet<>();
+    private UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>> generateLegalMoves() {
+        final UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>> legalMoves;
+        legalMoves = new UnifiedSet<>();
+
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 if (isLegalToMoveFrom(new AxialPosition(i, j))) {
@@ -173,7 +175,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public Set<TwoPhaseAction<AxialPosition, Rotation>> getLegalMoves() {
-        return (Set<TwoPhaseAction<AxialPosition, Rotation>>) legalMovesMemo.get(BOARD_SIZE).clone();
+        return legalMovesMemo.get(BOARD_SIZE).clone();
     }
 
     /**
