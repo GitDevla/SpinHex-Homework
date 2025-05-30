@@ -76,6 +76,7 @@ public class SpinHexController {
         generateHexGridInPlain(solutionPane, this::createMockHex);
         stepsLabel.textProperty().bind(steps.asString("(%d steps taken so far)"));
         usernameLabel.textProperty().bind(username.concat("'s Board"));
+        selector.phaseProperty().addListener(this::updateMoveCounterAfterMove);
         selector.phaseProperty().addListener(this::showSelectionPhaseChange);
         selector.phaseProperty().addListener(this::winConditionCheck);
     }
@@ -223,6 +224,14 @@ public class SpinHexController {
         }
     }
 
+    private void updateMoveCounterAfterMove(ObservableValue<? extends TwoPhaseActionSelector.Phase> value,
+            TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
+        if (newPhase == TwoPhaseActionSelector.Phase.READY_TO_MOVE) {
+            steps.setValue(steps.getValue() + 1);
+            Logger.info("Steps updated: {}", steps.get());
+        }
+    }
+
     private void winConditionCheck(ObservableValue<? extends TwoPhaseActionSelector.Phase> value,
             TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
         if (oldPhase == TwoPhaseActionSelector.Phase.READY_TO_MOVE) {
@@ -314,7 +323,6 @@ public class SpinHexController {
             if (selector.isReadyToMove()) {
                 Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getTo());
                 selector.makeMove();
-                steps.setValue(steps.getValue() + 1);
             }
             e.consume();
         });
@@ -326,7 +334,6 @@ public class SpinHexController {
             if (selector.isReadyToMove()) {
                 Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getTo());
                 selector.makeMove();
-                steps.setValue(steps.getValue() + 1);
             }
             e.consume();
         });
