@@ -13,7 +13,7 @@ public class ReadOnlySpinHexModelWrapper extends SpinHexModel {
         boardProperty = new ReadOnlyIntegerWrapper[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                boardProperty[i][j] = new ReadOnlyIntegerWrapper(board[i][j]);
+                boardProperty[i][j] = new ReadOnlyIntegerWrapper(board.get(i,j));
             }
         }
     }
@@ -23,22 +23,19 @@ public class ReadOnlySpinHexModelWrapper extends SpinHexModel {
         boardProperty = new ReadOnlyIntegerWrapper[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                boardProperty[i][j] = new ReadOnlyIntegerWrapper(board[i][j]);
+                boardProperty[i][j] = new ReadOnlyIntegerWrapper(board.get(i,j));
             }
         }
     }
 
     public ReadOnlyIntegerProperty getHexProperty(int q, int s) {
-        if (!isInBounds(new AxialPosition(q, s))) {
-            throw new IllegalArgumentException("Position out of bounds: " + new AxialPosition(q, s));
-        }
         return boardProperty[q][s];
     }
 
     private void updatePropertyModel(){
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                boardProperty[i][j].set(board[i][j]);
+                boardProperty[i][j].set(board.get(i,j));
             }
         }
     }

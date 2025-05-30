@@ -132,9 +132,9 @@ public class SpinHexController {
 
         var square = createHexContainer(row, col, leftOffset);
         var circle = createHexCircle();
-        circle.fillProperty().set(assignHexColorToPaint(model.getSolution()[row][col]));
+        circle.fillProperty().set(assignHexColorToPaint(model.getSolution().get(row, col)));
         var text = createHexText();
-        text.textProperty().set(assignHexColorToString(model.getSolution()[row][col]));
+        text.textProperty().set(assignHexColorToString(model.getSolution().get(row, col)));
         square.getChildren().addAll(circle, text);
         return square;
     }

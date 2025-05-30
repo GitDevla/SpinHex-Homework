@@ -12,7 +12,7 @@ package spinhex.model;
  * </ul>
  * These colors are used to track the state of hexagonal tiles on the game board.
  */
-public class HexColor {
+public final class HexColor {
     public static final byte NONE = 0x00;
     public static final byte RED = 0x01;
     public static final byte GREEN = 0x02;

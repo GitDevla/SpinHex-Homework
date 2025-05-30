@@ -2,7 +2,6 @@ package spinhex.model;
 
 import puzzle.State;
 import puzzle.solver.BreadthFirstSearch;
-import spinhex.BreadthFirstSearchExplorer;
 
 import java.util.*;
 
@@ -35,7 +34,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     public final int BOARD_SIZE;
 
-    protected byte[][] board;
+    protected HexagonalGrid board;
 
     private static final AxialPosition[] DIRECTIONS = {
             new AxialPosition(-1, 0), // Up
@@ -46,7 +45,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             new AxialPosition(0, -1) // Left
     };
 
-    private final byte[][] solvedBoard;
+    private final HexagonalGrid solvedBoard;
 
     private static final HashMap<Integer, HashSet<TwoPhaseAction<AxialPosition, Rotation>>> legalMovesMemo = new HashMap<>();
 
@@ -80,11 +79,17 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     public SpinHexModel(byte[][] startingBoard, byte[][] targetBoard) {
         BOARD_SIZE = startingBoard.length;
-        board = new byte[BOARD_SIZE][BOARD_SIZE];
+        board = new HexagonalGrid(BOARD_SIZE);
+        solvedBoard = new HexagonalGrid(BOARD_SIZE);
         for (int i = 0; i < BOARD_SIZE; i++) {
-            board[i] = Arrays.copyOf(startingBoard[i], startingBoard[i].length);
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                if (startingBoard[i][j] == HexColor.NONE) {
+                    continue;
+                }
+                board.set(i, j, startingBoard[i][j]);
+                solvedBoard.set(i, j, targetBoard[i][j]);
+            }
         }
-        this.solvedBoard = targetBoard;
         if (!legalMovesMemo.containsKey(BOARD_SIZE))
             legalMovesMemo.put(BOARD_SIZE, generateLegalMoves());
     }
@@ -94,7 +99,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * 
      * @return A 2D array representing the solved configuration of the board.
      */
-    public byte[][] getSolution() {
+    public HexagonalGrid getSolution() {
         return solvedBoard;
     }
 
@@ -113,18 +118,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     }
 
     /**
-     * Checks if the given position is within the bounds of the SpinHex board.
-     * 
-     * @param position The position to check.
-     * @return {@code true} if the position is within bounds, {@code false}
-     *         otherwise.
-     */
-    public boolean isInBounds(AxialPosition position) {
-        return position.q() >= 0 && position.q() < BOARD_SIZE &&
-                position.s() >= 0 && position.s() < BOARD_SIZE;
-    }
-
-    /**
      * Gets the color of the hex at the specified position.
      * 
      * @param position The position of the hex.
@@ -132,10 +125,10 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * @throws IllegalArgumentException if the position is out of bounds.
      */
     public Byte getHex(AxialPosition position) {
-        if (!isInBounds(position)) {
+        if (!board.isInBounds(position)) {
             throw new IllegalArgumentException("Position out of bounds: " + position);
         }
-        return board[position.q()][position.s()];
+        return board.get(position);
     }
 
     /**
@@ -148,7 +141,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         List<Byte> neighbors = new ArrayList<>();
         for (var dir : DIRECTIONS) {
             AxialPosition neighborPos = position.add(dir);
-            if (isInBounds(neighborPos)) {
+            if (board.isInBounds(neighborPos)) {
                 neighbors.add(getHex(neighborPos));
             } else {
                 neighbors.add(HexColor.NONE);
@@ -168,7 +161,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public boolean isLegalToMoveFrom(AxialPosition from) {
-        return isInBounds(from) && getHex(from) != HexColor.NONE
+        return board.isInBounds(from) && getHex(from) != HexColor.NONE
                 && getNeighbors(from).stream().noneMatch(color -> color == HexColor.NONE);
     }
 
@@ -182,7 +175,10 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     public boolean isSolved() {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                if (board[i][j] != solvedBoard[i][j]) {
+                if (!board.isInBounds(new AxialPosition(i, j))) {
+                    continue;
+                }
+                if (board.get(i, j) != solvedBoard.get(i, j)) {
                     return false;
                 }
             }
@@ -196,8 +192,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * @return A set of legal moves.
      */
     @Override
-    public HashSet<TwoPhaseAction<AxialPosition, Rotation>> getLegalMoves() {
-        return new HashSet<>(legalMovesMemo.get(BOARD_SIZE));
+    public Set<TwoPhaseAction<AxialPosition, Rotation>> getLegalMoves() {
+        return (Set<TwoPhaseAction<AxialPosition, Rotation>>) legalMovesMemo.get(BOARD_SIZE).clone();
     }
 
     /**
@@ -236,11 +232,11 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         for (int i = 0; i < 5; i++) {
             AxialPosition current = from.add(DIRECTIONS[i]);
             AxialPosition next = from.add(DIRECTIONS[i + 1]);
-            board[current.q()][current.s()] = getHex(next);
+            board.set(current, getHex(next));
         }
 
         AxialPosition lastPosition = from.add(DIRECTIONS[5]);
-        board[lastPosition.q()][lastPosition.s()] = temp;
+        board.set(lastPosition, temp);
     }
 
     private void rotateClockwise(AxialPosition from) {
@@ -249,11 +245,11 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         for (int i = 5; i > 0; i--) {
             AxialPosition current = from.add(DIRECTIONS[i]);
             AxialPosition previous = from.add(DIRECTIONS[i - 1]);
-            board[current.q()][current.s()] = getHex(previous);
+            board.set(current, getHex(previous));
         }
 
         AxialPosition firstPosition = from.add(DIRECTIONS[0]);
-        board[firstPosition.q()][firstPosition.s()] = temp;
+        board.set(firstPosition, temp);
     }
 
     /**
@@ -270,10 +266,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         } catch (CloneNotSupportedException e) {
             throw new AssertionError(e);
         }
-        copy.board = new byte[BOARD_SIZE][BOARD_SIZE];
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            copy.board[i] = Arrays.copyOf(board[i], board[i].length);
-        }
+        copy.board = board.clone();
         return copy;
     }
 
@@ -288,7 +281,9 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         var sb = new StringBuilder();
         for (var i = 0; i < BOARD_SIZE; i++) {
             for (var j = 0; j < BOARD_SIZE; j++) {
-                sb.append(board[i][j]).append('\t');
+                if (!board.isInBounds(new AxialPosition(i, j)))
+                    continue;
+                sb.append(board.get(i, j)).append('\t');
             }
             sb.append('\n');
         }
@@ -310,14 +305,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         if (o == null || getClass() != o.getClass())
             return false;
         SpinHexModel that = (SpinHexModel) o;
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                if (this.board[i][j] != that.board[i][j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return this.board.equals(that.board);
     }
 
     /**
@@ -328,13 +316,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public int hashCode() {
-        int result = 0;
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                result = 31 * result + board[i][j];
-            }
-        }
-        return result;
+        return board.hashCode();
     }
 
     public static void main(String[] args) {
@@ -350,7 +332,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         };
         SpinHexModel model = new SpinHexModel(smallBoardStart, smallBoardTarget);
         for (int i = 0; i < 4; i++) {
-            model.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1), Rotation.COUNTERCLOCKWISE));
+            model.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1),
+                    Rotation.COUNTERCLOCKWISE));
         }
         System.out.println(model);
         System.out.println(model.isSolved());
@@ -362,7 +345,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         };
         new BreadthFirstSearch<TwoPhaseAction<AxialPosition, Rotation>>()
                 .solveAndPrintSolution(new SpinHexModel(smallBoardStart, smallBoardTarget));
-        new BreadthFirstSearchExplorer<TwoPhaseAction<AxialPosition, Rotation>>()
+        new BreadthFirstSearch<TwoPhaseAction<AxialPosition, Rotation>>()
                 .solveAndPrintSolution(new SpinHexModel());
     }
 }
