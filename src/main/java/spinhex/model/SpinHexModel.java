@@ -36,7 +36,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     protected HexagonalGrid board;
 
-    private static final AxialPosition[] DIRECTIONS = {
+    protected static final AxialPosition[] DIRECTIONS = {
             new AxialPosition(-1, 0), // Up
             new AxialPosition(-1, 1), // Up-Right
             new AxialPosition(0, 1), // Right

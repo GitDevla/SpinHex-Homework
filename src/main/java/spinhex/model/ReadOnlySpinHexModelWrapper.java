@@ -32,17 +32,17 @@ public class ReadOnlySpinHexModelWrapper extends SpinHexModel {
         return boardProperty[q][s];
     }
 
-    private void updatePropertyModel(){
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                boardProperty[i][j].set(board.get(i,j));
-            }
+    private void updatePropertyModelAround(int q, int s) {
+        for (var d:DIRECTIONS){
+            var nq = q+d.q();
+            var ns = s+d.s();
+            boardProperty[nq][ns].setValue(board.get(nq,ns));
         }
     }
 
     @Override
     public void makeMove(TwoPhaseAction<AxialPosition, Rotation> moveAction) {
         super.makeMove(moveAction);
-        updatePropertyModel();
+        updatePropertyModelAround(moveAction.from().q(), moveAction.from().s());
     }
 }
