@@ -1,5 +1,6 @@
 package spinhex;
 
+import javafx.application.Platform;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -79,6 +80,12 @@ public class SpinHexController {
         selector.phaseProperty().addListener(this::updateMoveCounterAfterMove);
         selector.phaseProperty().addListener(this::showSelectionPhaseChange);
         selector.phaseProperty().addListener(this::winConditionCheck);
+        Platform.runLater(() -> {
+            Stage stage = (Stage) gamePane.getScene().getWindow();
+            stage.setTitle("SpinHex Game - " + username.get());
+            stage.setWidth(2 * HEX_SIZE * model.BOARD_SIZE + 100);
+            stage.setHeight(HEX_SIZE * model.BOARD_SIZE + 150);
+        });
     }
 
     private void generateHexGridInPlain(Pane pane, HexGenerator strategy) {
@@ -262,7 +269,6 @@ public class SpinHexController {
             Parent root = loader.load();
 
             Stage stage = (Stage) gamePane.getScene().getWindow();
-            stage.setTitle("SpinHex Game");
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {

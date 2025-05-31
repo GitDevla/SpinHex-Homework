@@ -1,5 +1,6 @@
 package spinhex;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -41,7 +42,6 @@ public class StartMenuController {
         controller.setUsername(usernameField.getText());
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setTitle("SpinHex Game");
         stage.setScene(new Scene(root));
         stage.show();
     }
@@ -51,6 +51,11 @@ public class StartMenuController {
         usernameCol.setCellValueFactory(new PropertyValueFactory<>("username"));
         scoreCol.setCellValueFactory(new PropertyValueFactory<>("score"));
         loadScores();
+        Platform.runLater(() -> {
+            var stage = (Stage) usernameField.getScene().getWindow();
+            stage.setTitle("SpinHex Home Screen");
+            stage.sizeToScene();
+        });
     }
 
     private void loadScores() {
