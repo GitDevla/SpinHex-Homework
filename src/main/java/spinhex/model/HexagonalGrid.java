@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 public final class HexagonalGrid implements Cloneable {
     private byte[] board;
-    private final int SIZE;
+    private final byte SIZE;
 
     /**
      * Constructs a new hexagonal grid with the specified size.
@@ -24,7 +24,7 @@ public final class HexagonalGrid implements Cloneable {
      * @param size The size of the grid (number of rows/columns)
      */
     public HexagonalGrid(int size) {
-        SIZE = size;
+        SIZE =(byte) size;
         this.board = new byte[size * size - calulateSavedSize(size)];
     }
 
