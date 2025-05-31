@@ -69,7 +69,7 @@ public final class HexagonalGrid implements Cloneable {
      * @return The radius of the hexagonal grid
      */
     public int getRadius() {
-        return (int) Math.floor((double) SIZE / 2);
+        return SIZE >> 1;
     }
 
     /**
@@ -227,6 +227,13 @@ public final class HexagonalGrid implements Cloneable {
      */
     @Override
     public int hashCode() {
-        return Arrays.hashCode(board);
+        // this implementation with p=67 seems more optimal
+        // than Arrays.hashcode(), resulting in fewer collisions
+        int hash = 0;
+        final int prime = 67;
+        for (byte value : board) {
+            hash = hash * prime + value;
+        }
+        return hash;
     }
 }
