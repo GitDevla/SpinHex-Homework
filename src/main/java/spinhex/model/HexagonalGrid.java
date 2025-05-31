@@ -24,7 +24,7 @@ public final class HexagonalGrid implements Cloneable {
      * @param size The size of the grid (number of rows/columns)
      */
     public HexagonalGrid(int size) {
-        SIZE =(byte) size;
+        SIZE = (byte) size;
         this.board = new byte[size * size - calulateSavedSize(size)];
     }
 
@@ -64,6 +64,9 @@ public final class HexagonalGrid implements Cloneable {
      * @param value The value to set for the cell
      */
     public void set(int q, int s, byte value) {
+        if (!isInBounds(q, s)) {
+            throw new IllegalArgumentException("Coordinates out of bounds: (" + q + ", " + s + ")");
+        }
         board[calculateIndex(q, s)] = value;
     }
 
@@ -88,8 +91,9 @@ public final class HexagonalGrid implements Cloneable {
      * @return The value of the cell, or 0 if out of bounds
      */
     public byte get(int q, int s) {
-        if (!isInBounds(q, s))
-            return 0;
+        if (!isInBounds(q, s)) {
+            throw new IllegalArgumentException("Coordinates out of bounds: (" + q + ", " + s + ")");
+        }
         return board[calculateIndex(q, s)];
     }
 

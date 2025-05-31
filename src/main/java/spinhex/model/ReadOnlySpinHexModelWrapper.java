@@ -13,7 +13,7 @@ public class ReadOnlySpinHexModelWrapper extends SpinHexModel {
         boardProperty = new ReadOnlyIntegerWrapper[getBoardSize()][getBoardSize()];
         for (int i = 0; i < getBoardSize(); i++) {
             for (int j = 0; j < getBoardSize(); j++) {
-                boardProperty[i][j] = new ReadOnlyIntegerWrapper(board.get(i,j));
+                boardProperty[i][j] = new ReadOnlyIntegerWrapper(board.isInBounds(i, j) ? board.get(i, j) : HexColor.NONE);
             }
         }
     }
@@ -23,7 +23,7 @@ public class ReadOnlySpinHexModelWrapper extends SpinHexModel {
         boardProperty = new ReadOnlyIntegerWrapper[getBoardSize()][getBoardSize()];
         for (int i = 0; i < getBoardSize(); i++) {
             for (int j = 0; j < getBoardSize(); j++) {
-                boardProperty[i][j] = new ReadOnlyIntegerWrapper(board.get(i,j));
+                boardProperty[i][j] = new ReadOnlyIntegerWrapper(board.isInBounds(i, j) ? board.get(i, j) : HexColor.NONE);
             }
         }
     }
@@ -33,10 +33,10 @@ public class ReadOnlySpinHexModelWrapper extends SpinHexModel {
     }
 
     private void updatePropertyModelAround(int q, int s) {
-        for (var d:DIRECTIONS){
-            var nq = q+d.q();
-            var ns = s+d.s();
-            boardProperty[nq][ns].setValue(board.get(nq,ns));
+        for (var d : DIRECTIONS) {
+            var nq = q + d.q();
+            var ns = s + d.s();
+            boardProperty[nq][ns].setValue(board.get(nq, ns));
         }
     }
 
