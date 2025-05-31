@@ -30,11 +30,6 @@ import java.util.*;
  * to query and manipulate the state according to the game rules.
  */
 public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation> {
-    /**
-     * The size of the SpinHex board.
-     */
-    public final int BOARD_SIZE;
-
     protected HexagonalGrid board;
 
     protected static final AxialPosition[] DIRECTIONS = {
@@ -79,11 +74,10 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      * @param targetBoard   The solved configuration of the board.
      */
     public SpinHexModel(byte[][] startingBoard, byte[][] targetBoard) {
-        BOARD_SIZE = startingBoard.length;
         board = new HexagonalGrid(startingBoard);
         solvedBoard = new HexagonalGrid(targetBoard);
-        if (!legalMovesMemo.containsKey(BOARD_SIZE))
-            legalMovesMemo.put(BOARD_SIZE, generateLegalMoves());
+        if (!legalMovesMemo.containsKey(getBoardSize()))
+            legalMovesMemo.put(getBoardSize(), generateLegalMoves());
     }
 
     /**
@@ -99,8 +93,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         final UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>> legalMoves;
         legalMoves = new UnifiedSet<>();
 
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
+        for (int i = 0; i < getBoardSize(); i++) {
+            for (int j = 0; j < getBoardSize(); j++) {
                 if (isLegalToMoveFrom(new AxialPosition(i, j))) {
                     legalMoves.add(new TwoPhaseAction<>(new AxialPosition(i, j), Rotation.CLOCKWISE));
                     legalMoves.add(new TwoPhaseAction<>(new AxialPosition(i, j), Rotation.COUNTERCLOCKWISE));
@@ -108,6 +102,10 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             }
         }
         return legalMoves;
+    }
+
+    public int getBoardSize() {
+        return board.getSize();
     }
 
     /**
@@ -175,7 +173,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public Set<TwoPhaseAction<AxialPosition, Rotation>> getLegalMoves() {
-        return legalMovesMemo.get(BOARD_SIZE).clone();
+        return legalMovesMemo.get(getBoardSize()).clone();
     }
 
     /**
@@ -261,8 +259,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     @Override
     public String toString() {
         var sb = new StringBuilder();
-        for (var i = 0; i < BOARD_SIZE; i++) {
-            for (var j = 0; j < BOARD_SIZE; j++) {
+        for (var i = 0; i < getBoardSize(); i++) {
+            for (var j = 0; j < getBoardSize(); j++) {
                 if (!board.isInBounds(new AxialPosition(i, j)))
                     continue;
                 sb.append(board.get(i, j)).append('\t');

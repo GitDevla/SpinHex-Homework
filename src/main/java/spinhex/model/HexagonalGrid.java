@@ -50,6 +50,10 @@ public final class HexagonalGrid implements Cloneable {
         }
     }
 
+    public int getSize() {
+        return SIZE;
+    }
+
     /**
      * Sets the value of a cell at the specified axial coordinates.
      *

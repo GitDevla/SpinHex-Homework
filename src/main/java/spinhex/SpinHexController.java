@@ -83,15 +83,15 @@ public class SpinHexController {
         Platform.runLater(() -> {
             Stage stage = (Stage) gamePane.getScene().getWindow();
             stage.setTitle("SpinHex Game - " + username.get());
-            stage.setWidth(2 * HEX_SIZE * model.BOARD_SIZE + 100);
-            stage.setHeight(HEX_SIZE * model.BOARD_SIZE + 150);
+            stage.setWidth(2 * HEX_SIZE * model.getBoardSize() + 100);
+            stage.setHeight(HEX_SIZE * model.getBoardSize() + 150);
         });
     }
 
     private void generateHexGridInPlain(Pane pane, HexGenerator strategy) {
-        var offsetStart = (double) (model.BOARD_SIZE - 1) / 4;
-        for (var i = 0; i < model.BOARD_SIZE; i++) {
-            for (var j = 0; j < model.BOARD_SIZE; j++) {
+        var offsetStart = (double) (model.getBoardSize() - 1) / 4;
+        for (var i = 0; i < model.getBoardSize(); i++) {
+            for (var j = 0; j < model.getBoardSize(); j++) {
                 var newHex = strategy.create(i, j, offsetStart);
                 if (newHex == null)
                     continue;

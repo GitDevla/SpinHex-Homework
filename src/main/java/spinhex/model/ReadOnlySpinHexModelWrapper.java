@@ -10,9 +10,9 @@ public class ReadOnlySpinHexModelWrapper extends SpinHexModel {
 
     public ReadOnlySpinHexModelWrapper() {
         super();
-        boardProperty = new ReadOnlyIntegerWrapper[BOARD_SIZE][BOARD_SIZE];
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
+        boardProperty = new ReadOnlyIntegerWrapper[getBoardSize()][getBoardSize()];
+        for (int i = 0; i < getBoardSize(); i++) {
+            for (int j = 0; j < getBoardSize(); j++) {
                 boardProperty[i][j] = new ReadOnlyIntegerWrapper(board.get(i,j));
             }
         }
@@ -20,9 +20,9 @@ public class ReadOnlySpinHexModelWrapper extends SpinHexModel {
 
     public ReadOnlySpinHexModelWrapper(byte[][] startingBoard, byte[][] targetBoard) {
         super(startingBoard, targetBoard);
-        boardProperty = new ReadOnlyIntegerWrapper[BOARD_SIZE][BOARD_SIZE];
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
+        boardProperty = new ReadOnlyIntegerWrapper[getBoardSize()][getBoardSize()];
+        for (int i = 0; i < getBoardSize(); i++) {
+            for (int j = 0; j < getBoardSize(); j++) {
                 boardProperty[i][j] = new ReadOnlyIntegerWrapper(board.get(i,j));
             }
         }
