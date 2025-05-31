@@ -188,3 +188,4 @@ nbdist/
 
 .vscode/
 scores.json
+*.log
