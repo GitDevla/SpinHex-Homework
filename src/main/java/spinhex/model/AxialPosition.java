@@ -4,15 +4,15 @@ package spinhex.model;
  * Represents a position in an axial coordinate system for a hexagonal grid.
  * <p>
  * In axial coordinates, the position is described by two values, q and s,
- * where q represents the top-left to bottom-right diagonal and s represents
- * the top-right to bottom-left diagonal.
+ * where q represents the row and s represents
+ * the top-left to bottom-right diagonal.
  * </p>
  * To learn more about axial coordinates, refer to:
  * <a href="https://www.redblobgames.com/grids/hexagons/#coordinates-axial">Red
  * Blob Games - Axial Coordinates</a>
  * 
- * @param q The top-left to bottom-right diagonal coordinate
- * @param s The top-right to bottom-left diagonal coordinate
+ * @param q The row coordinate
+ * @param s The top-left to bottom-right diagonal coordinate
  */
 public record AxialPosition(int q, int s) {
 
