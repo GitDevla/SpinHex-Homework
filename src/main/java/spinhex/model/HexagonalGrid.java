@@ -14,7 +14,6 @@ import java.util.Arrays;
 public final class HexagonalGrid implements Cloneable {
     private byte[] board;
     private final int SIZE;
-    private final int RADIUS;
 
     /**
      * Constructs a new hexagonal grid with the specified size.
@@ -26,7 +25,6 @@ public final class HexagonalGrid implements Cloneable {
      */
     public HexagonalGrid(int size) {
         SIZE = size;
-        RADIUS = (int) Math.floor((double) SIZE / 2);
         this.board = new byte[size * size - calulateSavedSize(size)];
     }
 
@@ -52,6 +50,10 @@ public final class HexagonalGrid implements Cloneable {
 
     public int getSize() {
         return SIZE;
+    }
+
+    public int getRadius() {
+        return (int) Math.floor((double) SIZE / 2);
     }
 
     /**
@@ -105,7 +107,7 @@ public final class HexagonalGrid implements Cloneable {
     }
 
     private int columnOffset(int row) {
-        return Math.max(0, RADIUS - row);
+        return Math.max(0, getRadius() - row);
     }
 
     private int calculateIndex(int q, int s) {
@@ -123,8 +125,8 @@ public final class HexagonalGrid implements Cloneable {
             leftOffset += columnOffset(i);
         }
         int rightOffset = 0;
-        for (int i = RADIUS; i < q; i++) {
-            rightOffset += RADIUS - i;
+        for (int i = getRadius(); i < q; i++) {
+            rightOffset += getRadius() - i;
         }
         return (q * SIZE) + (s - leftOffset + rightOffset);
     }
@@ -132,7 +134,7 @@ public final class HexagonalGrid implements Cloneable {
     private int calulateSavedSize(int size) {
         int savedSize = 0;
         for (int i = 0; i < size; i++) {
-            savedSize += Math.abs(RADIUS - i);
+            savedSize += Math.abs(getRadius() - i);
         }
         return savedSize;
     }
