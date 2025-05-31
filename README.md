@@ -1,31 +1,89 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/UkdUJk5L)
-# TODO: the name of your project
 
-TODO: a detailed description of your project (must contain at least the original description of the assignment)
+# SpinHex
 
-## Building from Source
+Debreceni Egyetem, Informatikai Kar
+Programtervező informatikus BSc, 2024/2025. tanév, 2. félév
+Szoftverfejlesztés (INBPM0420E) – Házi feladat projekt
 
-Building the project requires JDK 24 or later and access to [GitHub Packages](https://docs.github.com/en/packages).
+Készítette: Pataki Dávid Ferenc (JDS8WG)
 
-GitHub Packages requires authentication using a personal access token (classic) that can be created [here](https://github.com/settings/tokens).
+## Feladat
 
-> [!IMPORTANT]
-> You must create a personal access token (PAT) with the `read:packages` scope.
+### Eredeti Leírás
 
-You need a `settings.xml` file with the following content to store your PAT:
+> 1.16. Feladat
+>
+> Rendezzünk el 6 piros, 6 zöld és 7 kék korongot a 14. ábra bal oldalán látható módon.
+>
+> Válasszunk ki egy olyan korongot, amelynek 6 szomszédja van — ezek a szomszédok elforgathatók egy pozícióval balra vagy jobbra.
+>
+> Érjük el forgatásokkal, hogy a korongok a 14. ábra jobb oldalán látható módon helyezkedjenek el.
 
-```xml
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-    <servers>
-        <server>
-            <id>github</id>
-            <username><!-- Your GitHub username --></username>
-            <password><!-- Your GitHub personal access token (classic) --></password>
-        </server>
-    </servers>
-</settings>
+![14. ábra](./assets/task.png)
+
+### Játék menete
+
+- A kezdőképernyőn adja meg felhasználónevét
+- Válassza ki a "Start Game" opciót
+- A játéktáblán kattintson egy olyan korongra, amelynek 6 szomszédja van
+- A megjelenő forgató gombok segítségével forgassa el a korongokat az óramutató járásával megegyező vagy ellentétes irányba
+- A cél a jobb oldalon látható minta elérése a lehető legkevesebb lépésben
+
+### Megoldás
+
+- **(2,2)** pozícióból óramutató irányával **ellentétes** forgatás
+- **(2,2)** pozícióból óramutató irányával **ellentétes** forgatás
+- **(1,2)** pozícióból óramutató irányával **ellentétes** forgatás
+- **(2,2)** pozícióból óramutató irányával **ellentétes** forgatás
+- **(3,1)** pozícióból óramutató járásával **megegyező** forgatás
+- **(2,1)** pozícióból óramutató járásával **megegyező** forgatás
+- **(1,2)** pozícióból óramutató irányával **ellentétes** forgatás
+- **(2,3)** pozícióból óramutató irányával **ellentétes** forgatás
+- **(1,3)** pozícióból óramutató járásával **megegyező** forgatás
+
+#TODO: index magyarázat
+
+## Telepítés és Futtatás
+
+### Követelmények
+
+- **Java 24** vagy újabb
+- **Maven 3.9.9** vagy újabb
+
+### Project klónozása
+
+```bash
+git clone https://github.com/INBPM0420L/homework-project-2025-GitDevla
+cd SpinHex
 ```
 
-The `settings.xml` file must be placed in the `.m2` directory in your home directory, i.e., in the same directory that stores your local Maven repository.
+### Maven Projekt Beállítása
+
+1. Futtassa a Maven parancsot a függőségek letöltéséhez és a projekt felépítéséhez:
+
+```bash
+mvn clean package
+```
+
+2. Futtassa a projektet:
+
+```bash
+mvn exec:java
+```
+
+### Tesztelés
+
+A projekt teszteléséhez használja a következő Maven parancsot:
+
+```bash
+mvn test
+```
+
+### Dokumentáció
+
+Dokumentáció generálásához használja a következő Maven parancsot:
+
+```bash
+mvn site
+```
