@@ -30,9 +30,18 @@ import java.util.*;
  * to query and manipulate the state according to the game rules.
  */
 public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation> {
+    /**
+     * The hexagonal grid representing the current state of the SpinHex board.
+     * It contains the colors of the hexes in the game.
+     */
     protected HexagonalGrid board;
 
-    protected static final AxialPosition[] DIRECTIONS = {
+    /**
+     * The relative positions of the six adjacent hexes in a hexagonal grid.
+     * These positions are used to determine the neighbors of a hex and to
+     * perform rotations.
+     */
+    protected static final AxialPosition[] ADJACENT_DIRECTIONS = {
             new AxialPosition(-1, 0), // Up
             new AxialPosition(-1, 1), // Up-Right
             new AxialPosition(0, 1), // Right
@@ -104,6 +113,11 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
         return legalMoves;
     }
 
+    /**
+     * Gets the size of the SpinHex board.
+     *
+     * @return The size of the board (N for an NxN board).
+     */
     public int getBoardSize() {
         return board.getSize();
     }
@@ -130,7 +144,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     public List<Byte> getNeighbors(AxialPosition position) {
         List<Byte> neighbors = new ArrayList<>(6);
-        for (var dir : DIRECTIONS) {
+        for (var dir : ADJACENT_DIRECTIONS) {
             AxialPosition neighborPos = position.add(dir);
             if (board.isInBounds(neighborPos)) {
                 neighbors.add(getHex(neighborPos));
@@ -207,28 +221,28 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     }
 
     private void rotateCounterClockwise(AxialPosition from) {
-        Byte temp = getHex(from.add(DIRECTIONS[0]));
+        Byte temp = getHex(from.add(ADJACENT_DIRECTIONS[0]));
 
         for (int i = 0; i < 5; i++) {
-            AxialPosition current = from.add(DIRECTIONS[i]);
-            AxialPosition next = from.add(DIRECTIONS[i + 1]);
+            AxialPosition current = from.add(ADJACENT_DIRECTIONS[i]);
+            AxialPosition next = from.add(ADJACENT_DIRECTIONS[i + 1]);
             board.set(current, getHex(next));
         }
 
-        AxialPosition lastPosition = from.add(DIRECTIONS[5]);
+        AxialPosition lastPosition = from.add(ADJACENT_DIRECTIONS[5]);
         board.set(lastPosition, temp);
     }
 
     private void rotateClockwise(AxialPosition from) {
-        Byte temp = getHex(from.add(DIRECTIONS[5]));
+        Byte temp = getHex(from.add(ADJACENT_DIRECTIONS[5]));
 
         for (int i = 5; i > 0; i--) {
-            AxialPosition current = from.add(DIRECTIONS[i]);
-            AxialPosition previous = from.add(DIRECTIONS[i - 1]);
+            AxialPosition current = from.add(ADJACENT_DIRECTIONS[i]);
+            AxialPosition previous = from.add(ADJACENT_DIRECTIONS[i - 1]);
             board.set(current, getHex(previous));
         }
 
-        AxialPosition firstPosition = from.add(DIRECTIONS[0]);
+        AxialPosition firstPosition = from.add(ADJACENT_DIRECTIONS[0]);
         board.set(firstPosition, temp);
     }
 

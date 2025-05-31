@@ -48,10 +48,26 @@ public final class HexagonalGrid implements Cloneable {
         }
     }
 
+    /**
+     * Returns the size of the hexagonal grid.
+     * <p>
+     * The size is defined as the number of rows/columns in the grid.
+     * </p>
+     *
+     * @return The size of the hexagonal grid
+     */
     public int getSize() {
         return SIZE;
     }
 
+    /**
+     * Returns the radius of the hexagonal grid.
+     * <p>
+     * The radius is defined as half the size of the grid, rounded down.
+     * </p>
+     *
+     * @return The radius of the hexagonal grid
+     */
     public int getRadius() {
         return (int) Math.floor((double) SIZE / 2);
     }

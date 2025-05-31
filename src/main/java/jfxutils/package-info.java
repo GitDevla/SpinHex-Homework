@@ -9,6 +9,6 @@
  * </p>
  * 
  * @see <a href=
- *      "https://github.com/unideb-inf/homework-project-jfxutils">homework-project-jfxutils</a>
+ *      "https://inbpm0420l.github.io/homework-project-jfxutils/">homework-project-jfxutils</a>
  */
 package jfxutils;

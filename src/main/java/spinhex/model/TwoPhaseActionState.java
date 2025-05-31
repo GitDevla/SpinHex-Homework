@@ -33,8 +33,10 @@ public interface TwoPhaseActionState<T, U> extends State<TwoPhaseActionState.Two
      * Represents a two-phase action consisting of a source element and the action
      * to be performed.
      *
-     * @param <T> the type of the source element
-     * @param <U> the type of the action
+     * @param <T>    the type of the source element
+     * @param <U>    the type of the action
+     * @param from   the source element from which the action originates
+     * @param action the action to be performed from the source
      */
     record TwoPhaseAction<T, U>(T from, U action) {
     }
