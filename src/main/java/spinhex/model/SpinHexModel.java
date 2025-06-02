@@ -97,7 +97,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     }
 
     private UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>> generateLegalMoves() {
-        final UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>> legalMoves= new UnifiedSet<>();
+        final var legalMoves = new ArrayList<TwoPhaseAction<AxialPosition, Rotation>>();
 
         for (int i = 0; i < getBoardSize(); i++) {
             for (int j = 0; j < getBoardSize(); j++) {
@@ -107,7 +107,9 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
                 }
             }
         }
-        return legalMoves;
+        final var legalMovesSet = new UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>>(legalMoves.size(), 1);
+        legalMovesSet.addAll(legalMoves);
+        return legalMovesSet;
     }
 
     /**
@@ -184,7 +186,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     @Override
     public Set<TwoPhaseAction<AxialPosition, Rotation>> getLegalMoves() {
-        return legalMovesMemo.computeIfAbsent(getBoardSize(),(_)->generateLegalMoves()).clone();
+        return legalMovesMemo.computeIfAbsent(getBoardSize(), (_) -> generateLegalMoves()).clone();
     }
 
     /**
