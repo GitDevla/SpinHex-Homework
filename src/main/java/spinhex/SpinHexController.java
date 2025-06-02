@@ -1,10 +1,7 @@
 package spinhex;
 
 import javafx.application.Platform;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -17,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
@@ -27,6 +23,8 @@ import jfxutils.TwoPhaseActionSelector;
 import spinhex.model.*;
 import spinhex.score.Score;
 import spinhex.score.ScoreManager;
+import spinhex.ui.HexTile;
+
 import org.tinylog.Logger;
 
 import java.io.IOException;
@@ -73,8 +71,8 @@ public class SpinHexController {
 
     @FXML
     private void initialize() {
-        generateHexGridInPlain(gamePane, this::createInteractiveHex);
-        generateHexGridInPlain(solutionPane, this::createMockHex);
+        generateHexGridInPlain(gamePane, true);
+        generateHexGridInPlain(solutionPane, false);
         stepsLabel.textProperty().bind(steps.asString("(%d steps taken so far)"));
         usernameLabel.textProperty().bind(username.concat("'s Board"));
         selector.phaseProperty().addListener(this::updateMoveCounterAfterMove);
@@ -88,125 +86,33 @@ public class SpinHexController {
         });
     }
 
-    private void generateHexGridInPlain(Pane pane, HexGenerator strategy) {
+    private void generateHexGridInPlain(Pane pane, boolean interactive) {
         var offsetStart = (double) (model.getBoardSize() - 1) / 4;
-        for (var i = 0; i < model.getBoardSize(); i++) {
-            for (var j = 0; j < model.getBoardSize(); j++) {
-                var newHex = strategy.create(i, j, offsetStart);
-                if (newHex == null)
+        for (var row = 0; row < model.getBoardSize(); row++) {
+            for (var col = 0; col < model.getBoardSize(); col++) {
+                var modelHex = model.getHexProperty(row, col);
+                if (modelHex.get() == HexColor.NONE) {
                     continue;
-                pane.getChildren().add(newHex);
+                }
+                HexTile hexTile;
+                if (interactive) {
+                    hexTile = new HexTile(HEX_SIZE, modelHex);
+                    hexTile.setOnMouseClicked(this::handleMouseClickOnHex);
+                } else {
+                    hexTile = new HexTile(HEX_SIZE, model.getSolution().get(row, col));
+                }
+
+                double xOffset = col * HEX_SIZE;
+                xOffset -= offsetStart * HEX_SIZE;
+                var yOffset = row * (HEX_SIZE * 0.75);
+                hexTile.setTranslateX(xOffset);
+                hexTile.setTranslateY(yOffset);
+                hexTile.getProperties().put("q", row);
+                hexTile.getProperties().put("s", col);
+                pane.getChildren().add(hexTile);
             }
             offsetStart -= 0.5;
         }
-    }
-
-    @FunctionalInterface
-    private interface HexGenerator {
-        StackPane create(int row, int col, double leftOffset);
-    }
-
-    private StackPane createHexContainer(int row, int col, double leftOffset) {
-        double xOffset = col * HEX_SIZE;
-        xOffset -= leftOffset * HEX_SIZE;
-        var yOffset = row * (HEX_SIZE * 0.75);
-        var square = new StackPane();
-        square.setMinSize(HEX_SIZE, HEX_SIZE);
-        square.setMaxSize(HEX_SIZE, HEX_SIZE);
-        square.setTranslateX(xOffset);
-        square.setTranslateY(yOffset);
-        square.getProperties().put("q", row);
-        square.getProperties().put("s", col);
-        square.getStyleClass().add("hex-tile");
-        return square;
-    }
-
-    private Circle createHexCircle() {
-        return new Circle(HEX_SIZE / 2.7);
-    }
-
-    private Text createHexText() {
-        Text text = new Text();
-        text.setFill(Color.WHITE);
-        text.setBoundsType(TextBoundsType.VISUAL);
-        return text;
-    }
-
-    private StackPane createMockHex(int row, int col, double leftOffset) {
-        var modelHex = model.getHexProperty(row, col);
-        if (modelHex.get() == HexColor.NONE) {
-            return null;
-        }
-
-        var square = createHexContainer(row, col, leftOffset);
-        var circle = createHexCircle();
-        circle.fillProperty().set(assignHexColorToPaint(model.getSolution().get(row, col)));
-        var text = createHexText();
-        text.textProperty().set(assignHexColorToString(model.getSolution().get(row, col)));
-        square.getChildren().addAll(circle, text);
-        return square;
-    }
-
-    private StackPane createInteractiveHex(int row, int col, double leftOffset) {
-        var modelHex = model.getHexProperty(row, col);
-        if (modelHex.get() == HexColor.NONE) {
-            return null;
-        }
-
-        var square = createHexContainer(row, col, leftOffset);
-        var circle = createHexCircle();
-        circle.fillProperty().bind(createHexBindingColor(modelHex));
-        var text = createHexText();
-        text.textProperty().bind(createHexBindingString(modelHex));
-        square.getChildren().addAll(circle, text);
-        square.setOnMouseClicked(this::handleMouseClickOnHex);
-        return square;
-    }
-
-    private ObjectBinding<Paint> createHexBindingColor(ReadOnlyIntegerProperty hexColorProperty) {
-        return new ObjectBinding<Paint>() {
-            {
-                super.bind(hexColorProperty);
-            }
-
-            @Override
-            protected Paint computeValue() {
-                return assignHexColorToPaint((byte) hexColorProperty.get());
-            }
-        };
-    }
-
-    private Paint assignHexColorToPaint(Byte hexColor) {
-        return switch (hexColor) {
-            case HexColor.NONE -> Color.TRANSPARENT;
-            case HexColor.RED -> Color.RED;
-            case HexColor.BLUE -> Color.BLUE;
-            case HexColor.GREEN -> Color.GREEN;
-            default -> throw new IllegalStateException("Unexpected value: " + hexColor);
-        };
-    }
-
-    private String assignHexColorToString(Byte hexColor) {
-        return switch (hexColor) {
-            case HexColor.NONE -> "";
-            case HexColor.RED -> "P";
-            case HexColor.BLUE -> "K";
-            case HexColor.GREEN -> "Z";
-            default -> throw new IllegalStateException("Unexpected value: " + hexColor);
-        };
-    }
-
-    private ObjectBinding<String> createHexBindingString(ReadOnlyIntegerProperty hexColorProperty) {
-        return new ObjectBinding<String>() {
-            {
-                super.bind(hexColorProperty);
-            }
-
-            @Override
-            protected String computeValue() {
-                return assignHexColorToString((byte) hexColorProperty.get());
-            }
-        };
     }
 
     @FXML
@@ -234,8 +140,8 @@ public class SpinHexController {
     private void updateMoveCounterAfterMove(ObservableValue<? extends TwoPhaseActionSelector.Phase> value,
             TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
         if (newPhase == TwoPhaseActionSelector.Phase.READY_TO_MOVE) {
-            steps.setValue(steps.getValue() + 1);
-            Logger.info("Steps updated: {}", steps.get());
+        steps.setValue(steps.getValue() + 1);
+        Logger.info("Steps updated: {}", steps.get());
         }
     }
 
@@ -243,10 +149,10 @@ public class SpinHexController {
             TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
         if (oldPhase == TwoPhaseActionSelector.Phase.READY_TO_MOVE) {
             if (model.isSolved()) {
-                Logger.info("Puzzle solved by: {}", username.get());
-                saveScore();
-                showCongratulationsPopup();
-                switchSceneToStartMenu();
+        Logger.info("Puzzle solved by: {}", username.get());
+        saveScore();
+        showCongratulationsPopup();
+        switchSceneToStartMenu();
             }
         }
     }
