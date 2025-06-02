@@ -13,16 +13,13 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import jfxutils.JFXTwoPhaseActionSelector;
 import jfxutils.TwoPhaseActionSelector;
 import spinhex.model.*;
 import spinhex.score.Score;
 import spinhex.score.ScoreManager;
+import spinhex.ui.RotationSelectorOverlay;
 import spinhex.ui.HexTile;
 
 import org.tinylog.Logger;
@@ -206,31 +203,11 @@ public class SpinHexController {
         throw new AssertionError();
     }
 
-    private StackPane createRotationSelectorCircle(String Text) {
-        var stackPane = new StackPane();
-        var circle = new Circle(10);
-        circle.setFill(Color.LIGHTGRAY);
-        var text = new Text(Text);
-        text.setFill(Color.BLACK);
-        text.setBoundsType(TextBoundsType.VISUAL);
-        stackPane.getChildren().addAll(circle, text);
-        stackPane.setMinSize(30, 30);
-        stackPane.setMaxSize(30, 30);
-        return stackPane;
-    }
-
     private void showRotationSelectionOverlay(AxialPosition position) {
         var square = getSquare(position);
-        var rotationOverlay = new StackPane();
-        rotationOverlay.getStyleClass().add("rotation-overlay");
-        rotationOverlay.setMinSize(square.getMinWidth(), square.getMinHeight());
-        rotationOverlay.setMaxSize(square.getMaxWidth(), square.getMaxHeight());
-        rotationOverlay.setTranslateX(square.getTranslateX());
-        rotationOverlay.setTranslateY(square.getTranslateY());
+        var rotationOverlay = new RotationSelectorOverlay(square.getTranslateX(), square.getTranslateY(), HEX_SIZE);
 
-        var clockwise = createRotationSelectorCircle("⟳");
-        clockwise.setTranslateX(15);
-        clockwise.setOnMouseClicked(e -> {
+        rotationOverlay.setOnClockwiseClick(e -> {
             selector.select(Rotation.CLOCKWISE);
             if (selector.isReadyToMove()) {
                 Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getTo());
@@ -239,9 +216,7 @@ public class SpinHexController {
             e.consume();
         });
 
-        var counterClockwise = createRotationSelectorCircle("⟲");
-        counterClockwise.setTranslateX(-15);
-        counterClockwise.setOnMouseClicked(e -> {
+        rotationOverlay.setOnCounterClockwiseClick(e -> {
             selector.select(Rotation.COUNTERCLOCKWISE);
             if (selector.isReadyToMove()) {
                 Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getTo());
@@ -250,7 +225,6 @@ public class SpinHexController {
             e.consume();
         });
 
-        rotationOverlay.getChildren().addAll(clockwise, counterClockwise);
         gamePane.getChildren().add(rotationOverlay);
     }
 }
