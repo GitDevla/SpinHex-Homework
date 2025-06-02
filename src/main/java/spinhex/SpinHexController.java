@@ -74,6 +74,7 @@ public class SpinHexController {
         usernameLabel.textProperty().bind(username.concat("'s Board"));
         selector.phaseProperty().addListener(this::updateMoveCounterAfterMove);
         selector.phaseProperty().addListener(this::showSelectionPhaseChange);
+        selector.phaseProperty().addListener(this::makeMoveIfAllowed);
         selector.phaseProperty().addListener(this::winConditionCheck);
         Platform.runLater(() -> {
             Stage stage = (Stage) gamePane.getScene().getWindow();
@@ -118,18 +119,23 @@ public class SpinHexController {
         var q = (int) hex.getProperties().get("q");
         var s = (int) hex.getProperties().get("s");
         Logger.info("Clicked on hex at position: ({}, {})", q, s);
-        selector.select(new AxialPosition(q, s));
-        if (selector.isReadyToMove()) {
-            selector.reset();
-        }
+        selector.reset();
+        selector.selectFrom(new AxialPosition(q, s));
+    }
+
+    private void makeMoveIfAllowed(ObservableValue<? extends TwoPhaseActionSelector.Phase> value,
+            TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
+        if (newPhase != TwoPhaseActionSelector.Phase.READY_TO_MOVE)
+            return;
+        Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getAction());
+        selector.makeMove();
     }
 
     private void showSelectionPhaseChange(ObservableValue<? extends TwoPhaseActionSelector.Phase> value,
             TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
         switch (newPhase) {
-            case SELECT_FROM -> {
-            }
-            case SELECT_TO -> showRotationSelectionOverlay(selector.getFrom());
+            case SELECT_FROM -> hideSelection();
+            case SELECT_ACTION -> showRotationSelectionOverlay(selector.getFrom());
             case READY_TO_MOVE -> hideSelection();
         }
     }
@@ -208,21 +214,11 @@ public class SpinHexController {
         var rotationOverlay = new RotationSelectorOverlay(square.getTranslateX(), square.getTranslateY(), HEX_SIZE);
 
         rotationOverlay.setOnClockwiseClick(e -> {
-            selector.select(Rotation.CLOCKWISE);
-            if (selector.isReadyToMove()) {
-                Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getTo());
-                selector.makeMove();
-            }
-            e.consume();
+            selector.selectAction(Rotation.CLOCKWISE);
         });
 
         rotationOverlay.setOnCounterClockwiseClick(e -> {
-            selector.select(Rotation.COUNTERCLOCKWISE);
-            if (selector.isReadyToMove()) {
-                Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getTo());
-                selector.makeMove();
-            }
-            e.consume();
+            selector.selectAction(Rotation.COUNTERCLOCKWISE);
         });
 
         gamePane.getChildren().add(rotationOverlay);
