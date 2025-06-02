@@ -139,22 +139,22 @@ public class SpinHexController {
 
     private void updateMoveCounterAfterMove(ObservableValue<? extends TwoPhaseActionSelector.Phase> value,
             TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
-        if (newPhase == TwoPhaseActionSelector.Phase.READY_TO_MOVE) {
+        if (newPhase != TwoPhaseActionSelector.Phase.READY_TO_MOVE)
+            return;
         steps.setValue(steps.getValue() + 1);
         Logger.info("Steps updated: {}", steps.get());
-        }
     }
 
     private void winConditionCheck(ObservableValue<? extends TwoPhaseActionSelector.Phase> value,
             TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
-        if (oldPhase == TwoPhaseActionSelector.Phase.READY_TO_MOVE) {
-            if (model.isSolved()) {
+        if (oldPhase != TwoPhaseActionSelector.Phase.READY_TO_MOVE)
+            return;
+        if (!model.isSolved())
+            return;
         Logger.info("Puzzle solved by: {}", username.get());
         saveScore();
         showCongratulationsPopup();
         switchSceneToStartMenu();
-            }
-        }
     }
 
     private void saveScore() {
