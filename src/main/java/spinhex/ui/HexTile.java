@@ -15,9 +15,13 @@ public class HexTile extends StackPane {
     private static final float CIRCLE_RATIO = 0.5f;
     private final ObjectProperty<Paint> colorProperty;
     private final StringProperty textProperty;
+    private final int q;
+    private final int s;
 
-    public HexTile(int size, int color) {
+    public HexTile(int size, int color, int q, int s) {
         super();
+        this.q = q;
+        this.s = s;
         setMinSize(size, size);
         setMaxSize(size, size);
         getStyleClass().add("hex-tile");
@@ -30,6 +34,14 @@ public class HexTile extends StackPane {
         textProperty.set(assignHexColorToString((byte) color));
         inside_text.setBoundsType(TextBoundsType.VISUAL);
         getChildren().addAll(inside_circle, inside_text);
+    }
+
+    public int getQ() {
+        return q;
+    }
+
+    public int getS() {
+        return s;
     }
 
     public void bind(ReadOnlyIntegerProperty representing) {

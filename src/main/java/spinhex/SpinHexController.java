@@ -85,15 +85,12 @@ public class SpinHexController {
                 if (modelHex.get() == HexColor.NONE) {
                     continue;
                 }
-                HexTile hexTile = new HexTile(HEX_SIZE, model.getSolution().get(row, col));
+                HexTile hexTile = new HexTile(HEX_SIZE, model.getSolution().get(row, col), row, col);
 
                 if (interactive) {
                     hexTile.bind(modelHex);
                     hexTile.setOnMouseClicked(this::handleMouseClickOnHex);
                 }
-
-                hexTile.getProperties().put("q", row);
-                hexTile.getProperties().put("s", col);
                 pane.addHexTile(hexTile, row, col);
             }
         }
@@ -101,9 +98,9 @@ public class SpinHexController {
 
     @FXML
     private void handleMouseClickOnHex(MouseEvent event) {
-        var hex = (StackPane) event.getSource();
-        var q = (int) hex.getProperties().get("q");
-        var s = (int) hex.getProperties().get("s");
+        var hex = (HexTile) event.getSource();
+        var q = hex.getQ();
+        var s = hex.getS();
         Logger.info("Clicked on hex at position: ({}, {})", q, s);
         selector.reset();
         selector.selectFrom(new AxialPosition(q, s));
@@ -186,9 +183,11 @@ public class SpinHexController {
 
     private StackPane getSquare(AxialPosition position) {
         for (var child : gamePane.getChildren()) {
-            var q = (int) child.getProperties().get("q");
-            var s = (int) child.getProperties().get("s");
-            if (q == position.q() && s == position.s()) {
+            if (!(child instanceof HexTile)) {
+                continue;
+            }
+            HexTile hexTile = (HexTile) child;
+            if (hexTile.getQ() == position.q() && hexTile.getS() == position.s()) {
                 return (StackPane) child;
             }
         }
