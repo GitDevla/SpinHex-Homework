@@ -92,12 +92,11 @@ public class SpinHexController {
                 if (modelHex.get() == HexColor.NONE) {
                     continue;
                 }
-                HexTile hexTile;
+                HexTile hexTile = new HexTile(HEX_SIZE, model.getSolution().get(row, col));
+                ;
                 if (interactive) {
-                    hexTile = new HexTile(HEX_SIZE, modelHex);
+                    hexTile.bind(modelHex);
                     hexTile.setOnMouseClicked(this::handleMouseClickOnHex);
-                } else {
-                    hexTile = new HexTile(HEX_SIZE, model.getSolution().get(row, col));
                 }
 
                 double xOffset = col * HEX_SIZE;

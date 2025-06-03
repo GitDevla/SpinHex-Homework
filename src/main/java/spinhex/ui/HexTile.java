@@ -1,8 +1,7 @@
 package spinhex.ui;
 
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.ReadOnlyIntegerWrapper;
+import javafx.beans.property.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -13,21 +12,29 @@ import spinhex.model.HexColor;
 
 public class HexTile extends StackPane {
 
-    public HexTile(int size, ReadOnlyIntegerProperty representing) {
+    private static final float CIRCLE_RATIO = 0.5f;
+    private final ObjectProperty<Paint> colorProperty;
+    private final StringProperty textProperty;
+
+    public HexTile(int size, int color) {
         super();
         setMinSize(size, size);
         setMaxSize(size, size);
         getStyleClass().add("hex-tile");
-        var inside_circle = new Circle(size / 2.7);
-        inside_circle.fillProperty().bind(createHexBindingColor(representing));
+        var inside_circle = new Circle(size / (2 + CIRCLE_RATIO));
+        colorProperty = inside_circle.fillProperty();
+        colorProperty.set(assignHexColorToPaint((byte) color));
+
         var inside_text = new Text();
-        inside_text.textProperty().bind(createHexBindingString(representing));
+        textProperty = inside_text.textProperty();
+        textProperty.set(assignHexColorToString((byte) color));
         inside_text.setBoundsType(TextBoundsType.VISUAL);
         getChildren().addAll(inside_circle, inside_text);
     }
 
-    public HexTile(int size, int color) {
-        this(size, new ReadOnlyIntegerWrapper(color));
+    public void bind(ReadOnlyIntegerProperty representing) {
+        colorProperty.bind(createHexBindingColor(representing));
+        textProperty.bind(createHexBindingString(representing));
     }
 
     private ObjectBinding<Paint> createHexBindingColor(ReadOnlyIntegerProperty hexColorProperty) {
