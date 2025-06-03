@@ -2,4 +2,18 @@
   -fx-shape: "M 150,280 20,235 20,145 150,100 280,145 280,235 z";
   -fx-border-color: "black";
   -fx-border-width: 1px;
+  -fx-font-family: "Times New Roman";
+  -fx-font-size: 20px;
+}
+
+.hex-tile Text {
+  -fx-fill: white;
+}
+
+.rotation-overlay Circle{
+  -fx-fill: lightgray;
+}
+
+.rotation-overlay Text{
+  -fx-fill: black;
 }

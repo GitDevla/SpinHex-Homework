@@ -3,7 +3,6 @@ package spinhex.ui;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
@@ -40,9 +39,7 @@ public class RotationSelectorOverlay extends StackPane {
     private StackPane createRotationSelectorCircle(String Text) {
         var stackPane = new StackPane();
         var circle = new Circle(10);
-        circle.setFill(Color.LIGHTGRAY);
         var text = new Text(Text);
-        text.setFill(Color.BLACK);
         text.setBoundsType(TextBoundsType.VISUAL);
         stackPane.getChildren().addAll(circle, text);
         stackPane.setMinSize(30, 30);
