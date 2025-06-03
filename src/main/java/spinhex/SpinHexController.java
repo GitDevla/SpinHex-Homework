@@ -91,7 +91,7 @@ public class SpinHexController {
                     hexTile.bind(modelHex);
                     hexTile.setOnMouseClicked(this::handleMouseClickOnHex);
                 }
-                pane.addHexTile(hexTile, row, col);
+                pane.addHexTile(hexTile);
             }
         }
     }
