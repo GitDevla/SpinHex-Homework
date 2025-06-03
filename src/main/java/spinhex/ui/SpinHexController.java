@@ -1,4 +1,4 @@
-package spinhex;
+package spinhex.ui;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -18,9 +18,6 @@ import jfxutils.TwoPhaseActionSelector;
 import spinhex.model.*;
 import spinhex.score.Score;
 import spinhex.score.ScoreManager;
-import spinhex.ui.RotationSelectorOverlay;
-import spinhex.ui.HexGrid;
-import spinhex.ui.HexTile;
 
 import org.tinylog.Logger;
 
