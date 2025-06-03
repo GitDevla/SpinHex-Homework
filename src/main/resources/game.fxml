@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import spinhex.ui.HexGrid?>
 
 <GridPane hgap="20.0" prefHeight="495.0" prefWidth="940.0" vgap="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="spinhex.SpinHexController">
   <columnConstraints>
@@ -18,8 +19,8 @@
     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Pane fx:id="gamePane" prefHeight="326.0" prefWidth="340.0" stylesheets="@game.css" GridPane.rowIndex="1" />
-      <Pane fx:id="solutionPane" prefHeight="326.0" prefWidth="340.0" stylesheets="@game.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <HexGrid fx:id="gamePane" prefHeight="326.0" prefWidth="340.0" stylesheets="@game.css" GridPane.rowIndex="1" />
+      <HexGrid fx:id="solutionPane" prefHeight="326.0" prefWidth="340.0" stylesheets="@game.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       <FlowPane alignment="CENTER" columnHalignment="CENTER" hgap="40.0" prefHeight="200.0" prefWidth="200.0">
          <children>
             <Label fx:id="usernameLabel" text="username's Board" />

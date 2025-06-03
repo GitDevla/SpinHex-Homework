@@ -20,6 +20,7 @@ import spinhex.model.*;
 import spinhex.score.Score;
 import spinhex.score.ScoreManager;
 import spinhex.ui.RotationSelectorOverlay;
+import spinhex.ui.HexGrid;
 import spinhex.ui.HexTile;
 
 import org.tinylog.Logger;
@@ -40,22 +41,14 @@ public class SpinHexController {
     private Label stepsLabel;
 
     @FXML
-    private Pane gamePane;
+    private HexGrid gamePane;
 
     @FXML
-    private Pane solutionPane;
+    private HexGrid solutionPane;
 
     private ReadOnlyIntegerWrapper steps = new ReadOnlyIntegerWrapper(0);
 
-    private final ReadOnlySpinHexModelWrapper model = new ReadOnlySpinHexModelWrapper(new byte[][] {
-            { HexColor.NONE, HexColor.RED, HexColor.RED },
-            { HexColor.RED, HexColor.GREEN, HexColor.RED },
-            { HexColor.BLUE, HexColor.RED, HexColor.NONE }
-    }, new byte[][] {
-            { HexColor.NONE, HexColor.BLUE, HexColor.RED },
-            { HexColor.RED, HexColor.GREEN, HexColor.RED },
-            { HexColor.RED, HexColor.RED, HexColor.NONE }
-    });
+    private final ReadOnlySpinHexModelWrapper model = new ReadOnlySpinHexModelWrapper();
     private final JFXTwoPhaseActionSelector<AxialPosition, Rotation> selector = new JFXTwoPhaseActionSelector<>(model);
 
     public void setUsername(String username) {
@@ -84,8 +77,8 @@ public class SpinHexController {
         });
     }
 
-    private void generateHexGridInPlain(Pane pane, boolean interactive) {
-        var offsetStart = (double) (model.getBoardSize() - 1) / 4;
+    private void generateHexGridInPlain(HexGrid pane, boolean interactive) {
+        pane.setSize(model.getBoardSize());
         for (var row = 0; row < model.getBoardSize(); row++) {
             for (var col = 0; col < model.getBoardSize(); col++) {
                 var modelHex = model.getHexProperty(row, col);
@@ -93,22 +86,16 @@ public class SpinHexController {
                     continue;
                 }
                 HexTile hexTile = new HexTile(HEX_SIZE, model.getSolution().get(row, col));
-                ;
+
                 if (interactive) {
                     hexTile.bind(modelHex);
                     hexTile.setOnMouseClicked(this::handleMouseClickOnHex);
                 }
 
-                double xOffset = col * HEX_SIZE;
-                xOffset -= offsetStart * HEX_SIZE;
-                var yOffset = row * (HEX_SIZE * 0.75);
-                hexTile.setTranslateX(xOffset);
-                hexTile.setTranslateY(yOffset);
                 hexTile.getProperties().put("q", row);
                 hexTile.getProperties().put("s", col);
-                pane.getChildren().add(hexTile);
+                pane.addHexTile(hexTile, row, col);
             }
-            offsetStart -= 0.5;
         }
     }
 
