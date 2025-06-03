@@ -149,7 +149,6 @@ public class SpinHexController {
             scoreManager.add(new Score(username.get(), steps.getValue()));
             Logger.info("Score saved for user: {}", username.get());
         } catch (IOException e) {
-            e.printStackTrace();
             Logger.error("Failed to save score: {}", e.getMessage());
         }
 
