@@ -11,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import jfxutils.JFXTwoPhaseActionSelector;
@@ -61,8 +60,15 @@ public class SpinHexController {
 
     @FXML
     private void initialize() {
-        generateHexGridInPlain(gamePane, true);
-        generateHexGridInPlain(solutionPane, false);
+        gamePane.populateFromGrid(model.getSolution());
+        solutionPane.populateFromGrid(model.getBoard());
+
+        for (HexTile tile : gamePane.getHexTiles()) {
+            var modelHex = model.getHexProperty(tile.getQ(), tile.getS());
+            tile.bind(modelHex);
+            tile.setOnMouseClicked(this::handleMouseClickOnHex);
+        }
+
         stepsLabel.textProperty().bind(steps.asString("(%d steps taken so far)"));
         usernameLabel.textProperty().bind(username.concat("'s Board"));
         selector.phaseProperty().addListener(this::updateMoveCounterAfterMove);
@@ -75,25 +81,6 @@ public class SpinHexController {
             stage.setWidth(2 * HEX_SIZE * model.getBoardSize() + 100);
             stage.setHeight(HEX_SIZE * model.getBoardSize() + 150);
         });
-    }
-
-    private void generateHexGridInPlain(HexGrid pane, boolean interactive) {
-        pane.setSize(model.getBoardSize());
-        for (var row = 0; row < model.getBoardSize(); row++) {
-            for (var col = 0; col < model.getBoardSize(); col++) {
-                var modelHex = model.getHexProperty(row, col);
-                if (modelHex.get() == HexColor.NONE) {
-                    continue;
-                }
-                HexTile hexTile = new HexTile(HEX_SIZE, model.getSolution().get(row, col), row, col);
-
-                if (interactive) {
-                    hexTile.bind(modelHex);
-                    hexTile.setOnMouseClicked(this::handleMouseClickOnHex);
-                }
-                pane.addHexTile(hexTile);
-            }
-        }
     }
 
     @FXML
@@ -181,12 +168,8 @@ public class SpinHexController {
     }
 
     private StackPane getSquare(AxialPosition position) {
-        for (var child : gamePane.getChildren()) {
-            if (!(child instanceof HexTile)) {
-                continue;
-            }
-            HexTile hexTile = (HexTile) child;
-            if (hexTile.getQ() == position.q() && hexTile.getS() == position.s()) {
+        for (HexTile child : gamePane.getHexTiles()) {
+            if (child.getQ() == position.q() && child.getS() == position.s()) {
                 return (StackPane) child;
             }
         }

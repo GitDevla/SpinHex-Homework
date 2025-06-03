@@ -90,10 +90,21 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     /**
      * Gets the solved configuration of the SpinHex board.
      *
-     * @return A 2D array representing the solved configuration of the board.
+     * @return A deep copy of the HexagonalGrid representing the solved board
+     *         configuration.
      */
     public HexagonalGrid getSolution() {
-        return solvedBoard;
+        return solvedBoard.clone();
+    }
+
+    /**
+     * Gets the current state of the SpinHex board.
+     *
+     * @return A deep copy of the HexagonalGrid representing the current board
+     *         state.
+     */
+    public HexagonalGrid getBoard() {
+        return board.clone();
     }
 
     private UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>> generateLegalMoves() {
