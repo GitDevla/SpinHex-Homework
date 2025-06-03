@@ -222,7 +222,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     private void rotateCounterClockwise(AxialPosition from) {
         Byte temp = getHex(from.add(ADJACENT_DIRECTIONS[0]));
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < ADJACENT_DIRECTIONS.length - 1; i++) {
             AxialPosition current = from.add(ADJACENT_DIRECTIONS[i]);
             AxialPosition next = from.add(ADJACENT_DIRECTIONS[i + 1]);
             board.set(current, getHex(next));
@@ -235,7 +235,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     private void rotateClockwise(AxialPosition from) {
         Byte temp = getHex(from.add(ADJACENT_DIRECTIONS[5]));
 
-        for (int i = 5; i > 0; i--) {
+        for (int i = ADJACENT_DIRECTIONS.length - 1; i > 0; i--) {
             AxialPosition current = from.add(ADJACENT_DIRECTIONS[i]);
             AxialPosition previous = from.add(ADJACENT_DIRECTIONS[i - 1]);
             board.set(current, getHex(previous));
