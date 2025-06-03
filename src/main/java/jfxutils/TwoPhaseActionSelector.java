@@ -35,6 +35,9 @@ public class TwoPhaseActionSelector<T, U> {
     }
 
     private final TwoPhaseActionState<T, U> state;
+    /**
+     * The current phase of the action selection process.
+     */
     protected TwoPhaseActionSelector.Phase phase;
     private boolean invalidSelection;
     private T from;
@@ -53,7 +56,9 @@ public class TwoPhaseActionSelector<T, U> {
     }
 
     /**
-     * {@return the current selection phase}
+     * Returns the current selection phase.
+     * 
+     * @return the current selection phase
      */
     public final TwoPhaseActionSelector.Phase getPhase() {
         return this.phase;
@@ -70,7 +75,10 @@ public class TwoPhaseActionSelector<T, U> {
     }
 
     /**
-     * {@return whether the move is ready to be made}
+     * Returns whether the move is ready to be made.
+     * 
+     * @return {@code true} if the selection is in the READY_TO_MOVE phase,
+     *         {@code false} otherwise.
      */
     public final boolean isReadyToMove() {
         return this.phase == TwoPhaseActionSelector.Phase.READY_TO_MOVE;
@@ -98,7 +106,7 @@ public class TwoPhaseActionSelector<T, U> {
      * If the action is valid for the selected source, the selection process
      * advances to the ready-to-move phase.
      * 
-     * * @param action the action to perform at the selected source
+     * @param action the action to perform at the selected source
      */
     public void selectAction(U action) {
         if (this.state.isLegalMove(new TwoPhaseActionState.TwoPhaseAction<>(this.from, action))) {
@@ -111,9 +119,12 @@ public class TwoPhaseActionSelector<T, U> {
     }
 
     /**
-     * {@return the source position selected} If still in the SELECT_FROM phase,
-     * then an {@link IllegalStateException} is thrown as no source has been
-     * selected yet.
+     * Returns the source position selected.
+     * 
+     * @return the source position selected
+     * @throws IllegalStateException if the selection is still in the
+     *                               SELECT_FROM phase, meaning no source has been
+     *                               selected yet.
      */
     public final T getFrom() {
         if (this.phase == TwoPhaseActionSelector.Phase.SELECT_FROM) {
@@ -124,8 +135,11 @@ public class TwoPhaseActionSelector<T, U> {
     }
 
     /**
-     * {@return the action selected} If the selection is not in the READY_TO_MOVE
-     * phase, then an {@link IllegalStateException} is thrown.
+     * Returns the action selected.
+     * 
+     * @return the action selected
+     * @throws IllegalStateException if the selection is not in the
+     *                               READY_TO_MOVE phase.
      */
     public final U getAction() {
         if (this.phase != TwoPhaseActionSelector.Phase.SELECT_FROM
@@ -137,8 +151,11 @@ public class TwoPhaseActionSelector<T, U> {
     }
 
     /**
-     * {@return whether the last selection (i.e, for the source or the target,
-     * respectively) was invalid}
+     * Returns whether the last selection (i.e, for the source or the target
+     * respectively) was invalid.
+     * 
+     * @return {@code true} if the last selection was invalid, {@code false}
+     *         otherwise.
      */
     public final boolean isInvalidSelection() {
         return this.invalidSelection;

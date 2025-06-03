@@ -27,6 +27,9 @@ public class JFXTwoPhaseActionSelector<T, U> extends TwoPhaseActionSelector<T, U
 
     /**
      * Represents the current selection phase.
+     * 
+     * @return a read-only property that can be observed for changes in the
+     *         selection phase
      */
     public ReadOnlyObjectProperty<Phase> phaseProperty() {
         return this.phaseProperty.getReadOnlyProperty();
