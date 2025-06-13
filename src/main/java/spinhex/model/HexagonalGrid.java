@@ -127,28 +127,26 @@ public final class HexagonalGrid implements Cloneable {
     }
 
     private int columnOffset(int row) {
-        return Math.max(0, getRadius() - row);
+        return getRadius() - row;
     }
 
     private int calculateIndex(int q, int s) {
-        s = convertToJaggedPosition(q, s);
-        return convertToFlat(q, s);
+        final int flatIndex = convertToFlat(q, s);
+        final int offset = calculateJaggedOffset(q);
+        return flatIndex - offset;
     }
 
-    private int convertToJaggedPosition(int q, int s) {
-        return s - columnOffset(q);
+    private int calculateJaggedOffset(int q) {
+        final int limit = getRadius() > q ? q + 1 : q;
+        int offset = 0;
+        for (int i = 0; i < limit; i++) {
+            offset += Math.abs(columnOffset(i));
+        }
+        return offset;
     }
 
     private int convertToFlat(int q, int s) {
-        int leftOffset = 0;
-        for (int i = 0; i < q; i++) {
-            leftOffset += columnOffset(i);
-        }
-        int rightOffset = 0;
-        for (int i = getRadius(); i < q; i++) {
-            rightOffset += getRadius() - i;
-        }
-        return (q * SIZE) + (s - leftOffset + rightOffset);
+        return (q * SIZE) + s;
     }
 
     private int calulateSavedSize(int size) {
