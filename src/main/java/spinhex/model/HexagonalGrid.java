@@ -214,6 +214,9 @@ public final class HexagonalGrid implements Cloneable {
         if (o == null || getClass() != o.getClass())
             return false;
 
+        if (this == o)
+            return true;
+
         HexagonalGrid that = (HexagonalGrid) o;
         return Arrays.equals(board, that.board);
     }
