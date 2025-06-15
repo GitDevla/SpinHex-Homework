@@ -234,10 +234,10 @@ public final class HexagonalGrid implements Cloneable {
      */
     @Override
     public int hashCode() {
-        // this implementation with p=67 seems more optimal
+        // this implementation with p=3 seems more optimal
         // than Arrays.hashcode(), resulting in fewer collisions
-        int hash = 0;
-        final int prime = 67;
+        int hash = 1;
+        final int prime = 3;
         for (byte value : board) {
             hash = hash * prime + value;
         }
