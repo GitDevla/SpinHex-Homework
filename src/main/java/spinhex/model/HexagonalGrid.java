@@ -137,12 +137,18 @@ public final class HexagonalGrid implements Cloneable {
     }
 
     private int calculateJaggedOffset(int q) {
-        final int limit = getRadius() > q ? q + 1 : q;
-        int offset = 0;
-        for (int i = 0; i < limit; i++) {
-            offset += Math.abs(columnOffset(i));
-        }
-        return offset;
+        final int radius = getRadius();
+        final int rowsAbove = Math.min(radius, q + 1);
+        final int rowsBellow = Math.max(radius + 1, q) - (radius + 1);
+
+        final int colOffset0 = columnOffset(0);
+        final int colOffsetAbove = columnOffset(rowsAbove - 1);
+        final int colOffsetBelow = columnOffset(rowsBellow - 1);
+
+        final int leftOffset = ((colOffset0 + colOffsetAbove) * rowsAbove) >> 1;
+        final int rightOffset = (colOffsetBelow * rowsBellow) >> 1;
+
+        return leftOffset + rightOffset;
     }
 
     private int convertToFlat(int q, int s) {
