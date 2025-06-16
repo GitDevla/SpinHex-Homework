@@ -2,10 +2,11 @@ package solver;
 
 import puzzle.State;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Optional;
+
+import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 
 /**
  * Implements the breadth-first search (BFS) algorithm to solve puzzles.
@@ -23,8 +24,8 @@ public class BreadthFirstSearchModified<T> {
      *         or an empty {@code Optional} if no solution is found
      */
     public Optional<Node<T>> solve(State<T> state) {
-        Deque<Node<T>> open = new LinkedList<>();
-        var seen = new HashSet<Node<T>>();
+        Deque<Node<T>> open = new ArrayDeque<>();
+        var seen = new UnifiedSet<Node<T>>();
         var start = new Node<>(state);
         open.add(start);
         seen.add(start);
