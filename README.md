@@ -8,6 +8,8 @@ Szoftverfejlesztés (INBPM0420E) – Házi feladat projekt
 
 Készítette: Pataki Dávid Ferenc (JDS8WG)
 
+Lényeges háttéranyag: [Teljesítmény Analízis](performance_analysis.md)
+
 ## Feladat
 
 ### Eredeti Leírás
