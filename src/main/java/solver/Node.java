@@ -2,6 +2,7 @@ package solver;
 
 import puzzle.State;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,7 +14,6 @@ import java.util.Set;
 public class Node<T> {
 
     private final State<T> state;
-    private final Set<T> moves;
     private final Node<T> parent;
     private final T move;
 
@@ -29,13 +29,12 @@ public class Node<T> {
     /**
      * Creates a {@code Node} with a parent node.
      *
-     * @param state the state represented by the node
+     * @param state  the state represented by the node
      * @param parent the parent of the node
-     * @param move the move that created the state from the parent node
+     * @param move   the move that created the state from the parent node
      */
     public Node(State<T> state, Node<T> parent, T move) {
         this.state = state;
-        this.moves = state.getLegalMoves();
         this.parent = parent;
         this.move = move;
     }
@@ -51,7 +50,7 @@ public class Node<T> {
      * Returns the parent of the node.
      *
      * @return an {@code Optional} describing the parent of the node, or an
-     * empty optional if the node does not have a parent
+     *         empty optional if the node does not have a parent
      */
     public Optional<Node<T>> getParent() {
         return Optional.ofNullable(parent);
@@ -62,39 +61,28 @@ public class Node<T> {
      * node.
      *
      * @return an {@code Optional} describing the move that created the state
-     * from the parent node, or an empty {@code Optional} if the node does not
-     * have a parent
+     *         from the parent node, or an empty {@code Optional} if the node does
+     *         not
+     *         have a parent
      */
     public Optional<T> getMove() {
         return Optional.ofNullable(move);
     }
 
     /**
-     * {@return whether the node has at least one child node to be created with
-     * the {@link #nextChild()} method}
+     * Expands the node by generating all possible next states from the
+     * current state.
+     * 
+     * @return a set of nodes representing the next states
      */
-    public boolean hasNextChild() {
-        return !moves.isEmpty();
-    }
-
-    /**
-     * Creates and returns the next child of the node by applying a legal move
-     * to the state represented by the node. The move applied to the state is
-     * removed from the set of legal moves.
-     *
-     * @return an {@code Optional} describing the next child of the node, or an
-     * empty {@code Optional} if there are no more children
-     */
-    public Optional<Node<T>> nextChild() {
-        if (!hasNextChild()) {
-            return Optional.empty();
+    public Set<Node<T>> expand() {
+        Set<Node<T>> nextStates = new HashSet<>();
+        for (T move : state.getLegalMoves()) {
+            var newState = state.clone();
+            newState.makeMove(move);
+            nextStates.add(new Node<>(newState, this, move));
         }
-        var iterator = moves.iterator();
-        var move = iterator.next();
-        iterator.remove();
-        var newState = state.clone();
-        newState.makeMove(move);
-        return Optional.of(new Node<>(newState, this, move));
+        return nextStates;
     }
 
     @Override

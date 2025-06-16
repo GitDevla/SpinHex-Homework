@@ -20,7 +20,7 @@ public class BreadthFirstSearchModified<T> {
      *
      * @param state the initial state
      * @return an {@code Optional} describing the shortest solution for the puzzle,
-     * or an empty {@code Optional} if no solution is found
+     *         or an empty {@code Optional} if no solution is found
      */
     public Optional<Node<T>> solve(State<T> state) {
         Deque<Node<T>> open = new LinkedList<>();
@@ -33,8 +33,7 @@ public class BreadthFirstSearchModified<T> {
             if (selected.getState().isSolved()) {
                 return Optional.of(selected);
             }
-            while (selected.hasNextChild()) {
-                var nextChild = selected.nextChild().orElseThrow();
+            for (var nextChild : selected.expand()) {
                 if (!seen.contains(nextChild)) {
                     open.offerLast(nextChild);
                     seen.add(nextChild);
@@ -50,14 +49,13 @@ public class BreadthFirstSearchModified<T> {
      *
      * @param state the initial state
      * @return an {@code Optional} describing the shortest solution for the puzzle,
-     * or an empty {@code Optional} if no solution is found
+     *         or an empty {@code Optional} if no solution is found
      */
     public Optional<Node<T>> solveAndPrintSolution(State<T> state) {
         var solution = solve(state);
         solution.ifPresentOrElse(
                 this::printPathTo,
-                () -> System.out.println("No solution found")
-        );
+                () -> System.out.println("No solution found"));
         return solution;
     }
 
