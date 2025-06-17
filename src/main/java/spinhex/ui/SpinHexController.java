@@ -57,8 +57,8 @@ public class SpinHexController {
 
     @FXML
     private void initialize() {
-        gamePane.populateFromGrid(model.getSolution());
-        solutionPane.populateFromGrid(model.getBoard());
+        gamePane.populateFromGrid(model.getBoard());
+        solutionPane.populateFromGrid(model.getSolution());
 
         for (HexTile tile : gamePane.getHexTiles()) {
             var modelHex = model.getHexProperty(tile.getQ(), tile.getS());
