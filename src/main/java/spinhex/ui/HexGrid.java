@@ -6,7 +6,7 @@ import javafx.scene.layout.Pane;
 import spinhex.model.HexagonalGrid;
 
 public class HexGrid extends Pane {
-    private static final int HEX_SIZE = 80;
+    private int HEX_SIZE = 80;
     private static final double PADDING = 4;
     private double offsetStart;
 
@@ -15,7 +15,15 @@ public class HexGrid extends Pane {
     }
 
     public void setSize(int size) {
+        final var pxSize = (HEX_SIZE) * size + PADDING*(size-1);
+        setPrefSize(pxSize, pxSize/1.25);
+        setMaxSize(pxSize, pxSize/1.25);
+        setMinSize(pxSize, pxSize/1.25);
         this.offsetStart = (double) (size - 1) / 4;
+    }
+
+    public void setHexSize(int size) {
+        this.HEX_SIZE = size;
     }
 
     public void addHexTile(HexTile tile) {

@@ -23,6 +23,7 @@ public class HexTile extends StackPane {
         this.q = q;
         this.s = s;
         setMinSize(size, size);
+        setPrefSize(size, size);
         setMaxSize(size, size);
         getStyleClass().add("hex-tile");
         var inside_circle = new Circle(size / (2 + CIRCLE_RATIO));

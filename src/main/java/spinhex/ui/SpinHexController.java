@@ -58,6 +58,7 @@ public class SpinHexController {
     @FXML
     private void initialize() {
         gamePane.populateFromGrid(model.getBoard());
+        solutionPane.setHexSize((int) (HEX_SIZE / 1.5));
         solutionPane.populateFromGrid(model.getSolution());
 
         for (HexTile tile : gamePane.getHexTiles()) {
@@ -75,8 +76,6 @@ public class SpinHexController {
         Platform.runLater(() -> {
             Stage stage = (Stage) gamePane.getScene().getWindow();
             stage.setTitle("SpinHex Game - " + username.get());
-            stage.setWidth(2 * HEX_SIZE * model.getBoardSize() + 100);
-            stage.setHeight(HEX_SIZE * model.getBoardSize() + 150);
         });
     }
 
