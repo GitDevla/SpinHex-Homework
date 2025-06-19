@@ -80,7 +80,7 @@ Az alap BFS-implementáció jelentősen túllépi az elméleti 4.1 GB-os határt
 Amennyiben a lehetséges lépések halmazát egy `HashSet` típusban tároljuk, akkor a BFS memória használata **22 GB** és a futási ideje **~4 perc 36 másodperc** lesz.
 ![Eredeti BFS kereső memória használata HashSet-el](./assets/mem_orig_hashmap.png)
 
-Egy lehetséges alternatíva a HashSet használata helyett a `org.eclipse.collections.impl.set.mutable.UnifiedSet` típus használata, fixált `1` load faktorral. UnifiedSet optimálisabban tárolja a egyedeket.
+Egy lehetséges alternatíva a HashSet használata helyett a `org.eclipse.collections.impl.set.mutable.UnifiedSet` típus használata, fixált `1` load faktorral. [UnifiedSet optimálisabban tárolja a egyedeket.](https://medium.com/oracledevs/unifiedset-the-memory-saver-25b830745959)
 A UnifiedSet használata esetén a BFS memória használata **14 GB**-ra és a futási idő **~2 perc 49 másodpercre** csökken.
 ![Eredeti BFS kereső memória használata UnifiedSet-el](./assets/mem_orig_unifiedset.png)
 
