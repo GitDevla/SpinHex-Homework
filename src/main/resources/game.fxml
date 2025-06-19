@@ -43,6 +43,13 @@
       <HBox>
          <HexGrid fx:id="solutionPane" stylesheets="@game.css" />
       </HBox>
+      <VBox alignment="CENTER" spacing="10.0">
+         <padding>
+            <Insets top="10.0" />
+         </padding>
+         <Button fx:id="solveButton" text="Undo" onMouseClicked="#handleMouseClickUndo"
+            maxWidth="Infinity" />
+      </VBox>
    </VBox>
    <FlowPane alignment="CENTER" columnHalignment="CENTER" hgap="40.0" prefHeight="200.0"
       prefWidth="200.0">

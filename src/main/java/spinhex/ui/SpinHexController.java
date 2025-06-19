@@ -23,11 +23,11 @@ import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 
 public class SpinHexController {
 
     private static final int HEX_SIZE = 80;
-
     private ReadOnlyStringWrapper username = new ReadOnlyStringWrapper("Anonymous");
 
     @FXML
@@ -41,6 +41,9 @@ public class SpinHexController {
 
     @FXML
     private HexGrid solutionPane;
+
+    @FXML
+    private final ArrayDeque<TwoPhaseActionState.TwoPhaseAction<AxialPosition, Rotation>> moves = new ArrayDeque<>();
 
     private ReadOnlyIntegerWrapper steps = new ReadOnlyIntegerWrapper(0);
 
@@ -89,10 +92,30 @@ public class SpinHexController {
         selector.selectFrom(new AxialPosition(q, s));
     }
 
+    @FXML
+    private void handleMouseClickUndo(MouseEvent event) {
+        if (moves.isEmpty()) {
+            Logger.warn("No moves to undo.");
+            return;
+        }
+        var lastMove = moves.pop();
+        Logger.info("Undoing move: {} at position: {}", lastMove.action(), lastMove.from());
+        undoMove(lastMove);
+        steps.setValue(steps.getValue() - 1);
+    }
+
+    private void undoMove(TwoPhaseActionState.TwoPhaseAction<AxialPosition, Rotation> movement) {
+        AxialPosition from = movement.from();
+        Rotation action = movement.action();
+        Rotation inverseAction = action == Rotation.CLOCKWISE ? Rotation.COUNTERCLOCKWISE : Rotation.CLOCKWISE;
+        model.makeMove(new TwoPhaseActionState.TwoPhaseAction<>(from, inverseAction));
+    }
+
     private void makeMoveIfAllowed(ObservableValue<? extends TwoPhaseActionSelector.Phase> value,
             TwoPhaseActionSelector.Phase oldPhase, TwoPhaseActionSelector.Phase newPhase) {
         if (newPhase != TwoPhaseActionSelector.Phase.READY_TO_MOVE)
             return;
+        moves.push(new TwoPhaseActionState.TwoPhaseAction<>(selector.getFrom(), selector.getAction()));
         Logger.info("Making move: {}\nRotation: {}", selector.getFrom(), selector.getAction());
         selector.makeMove();
     }
