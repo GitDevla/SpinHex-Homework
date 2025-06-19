@@ -100,7 +100,9 @@ Az 1 perc 21 másodperces futási idő még nem teljesen optimális, de ezzel m�
 
 ![Futási idő eloszlás Full Sampling](./assets/cpu_modif.png)
 
-Ha _Instrumentation_ módban futtatom a JProfiler-t, akkor a legtöbb időt a `HexagonalGrid.calculateJaggedOffset()` metódus hívás viszi el, ami pedig azért érdekes mert _Full Sampling_ módban meg se jelenik. (ez most lehet azért mert a JVM inline-olja, nem tudom). Az _Instrumentation_ módnak viszont az a nagy hátránya hogy minden metódus hívásnál módosítja a bytecode-ot, és a `calculateJaggedOffset` pont olyan metódus amit csak egy forgatásnál 12x kerül meghívásra, ami közre játszhat a futási idő torzításában.
+Ha _Instrumentation_ módban futtatom a JProfiler-t, akkor a legtöbb időt a `HexagonalGrid.calculateJaggedOffset()` metódus hívás viszi el, ami pedig azért érdekes mert _Full Sampling_ módban meg se jelenik. (ez most lehet azért mert a JVM inline-olja, nem tudom[^1]). Az _Instrumentation_ módnak viszont az a nagy hátránya hogy minden metódus hívásnál módosítja a bytecode-ot, és a `calculateJaggedOffset` pont olyan metódus amit csak egy forgatásnál 12x kerül meghívásra, ami közre játszhat a futási idő torzításában.
+
+[^1]: EDIT: `-XX:+PrintInlining`-al tesztelve, inline-olja a JVM az egész `HexagonalGrid.calculateIndex` metódust, viszont a `SpinHexModel::makeMove` metódust nem mindig sikerül, ennek ellenére nem jelenik meg _Full Sampling_ módban.
 
 `calculateJaggedOffset`-be pont ezért több erőt fektettem bele hogy minnél jobban optimalizáljam, teljesen matematikai képletet használok a számításra, így a metódus hívás költsége minimálisnak kéne lennie.
 
