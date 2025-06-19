@@ -1,4 +1,4 @@
-package spinhex.ui;
+package spinhex.ui.controller;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -20,6 +20,9 @@ import spinhex.score.Score;
 import spinhex.score.ScoreManager;
 
 import org.tinylog.Logger;
+import spinhex.ui.component.HexGrid;
+import spinhex.ui.component.HexTile;
+import spinhex.ui.component.RotationSelectorOverlay;
 
 import java.io.IOException;
 import java.nio.file.Path;

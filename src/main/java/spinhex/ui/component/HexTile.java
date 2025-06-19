@@ -1,4 +1,4 @@
-package spinhex.ui;
+package spinhex.ui.component;
 
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.*;

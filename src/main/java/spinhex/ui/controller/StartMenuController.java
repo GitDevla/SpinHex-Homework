@@ -1,4 +1,4 @@
-package spinhex.ui;
+package spinhex.ui.controller;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;

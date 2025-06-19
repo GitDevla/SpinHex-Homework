@@ -8,12 +8,12 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import spinhex.ui.HexGrid?>
+<?import spinhex.ui.component.HexGrid?>
 <?import javafx.scene.control.Button?>
 
 <GridPane hgap="20.0" vgap="20.0"
    xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-   fx:controller="spinhex.ui.SpinHexController">
+   fx:controller="spinhex.ui.controller.SpinHexController">
    <columnConstraints>
       <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />

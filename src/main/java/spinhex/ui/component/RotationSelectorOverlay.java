@@ -1,4 +1,4 @@
-package spinhex.ui;
+package spinhex.ui.component;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;

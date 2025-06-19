@@ -1,8 +1,9 @@
 package spinhex.model;
 
+import game.TwoPhaseMoveState;
 import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 import puzzle.State;
-import puzzle.solver.BreadthFirstSearch;
+import solver.BreadthFirstSearchModified;
 
 import java.util.*;
 
@@ -324,32 +325,46 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     }
 
     public static void main(String[] args) {
-        var smallBoardStart = new byte[][] {
-                { HexColor.NONE, HexColor.RED, HexColor.RED },
-                { HexColor.RED, HexColor.GREEN, HexColor.RED },
-                { HexColor.BLUE, HexColor.RED, HexColor.NONE }
-        };
-        var smallBoardTarget = new byte[][] {
-                { HexColor.NONE, HexColor.BLUE, HexColor.RED },
-                { HexColor.RED, HexColor.GREEN, HexColor.RED },
-                { HexColor.RED, HexColor.RED, HexColor.NONE }
-        };
-        SpinHexModel model = new SpinHexModel(smallBoardStart, smallBoardTarget);
-        for (int i = 0; i < 4; i++) {
-            model.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1),
-                    Rotation.COUNTERCLOCKWISE));
-        }
-        System.out.println(model);
-        System.out.println(model.isSolved());
-
-        smallBoardStart = new byte[][] {
-                { HexColor.NONE, HexColor.RED, HexColor.RED },
-                { HexColor.RED, HexColor.GREEN, HexColor.RED },
-                { HexColor.BLUE, HexColor.RED, HexColor.NONE }
-        };
-        new BreadthFirstSearch<TwoPhaseAction<AxialPosition, Rotation>>()
-                .solveAndPrintSolution(new SpinHexModel(smallBoardStart, smallBoardTarget));
-        new BreadthFirstSearch<TwoPhaseAction<AxialPosition, Rotation>>()
+        // var smallBoardStart = new byte[][] {
+        // { HexColor.NONE, HexColor.RED, HexColor.RED },
+        // { HexColor.RED, HexColor.GREEN, HexColor.RED },
+        // { HexColor.BLUE, HexColor.RED, HexColor.NONE }
+        // };
+        // var smallBoardTarget = new byte[][] {
+        // { HexColor.NONE, HexColor.BLUE, HexColor.RED },
+        // { HexColor.RED, HexColor.GREEN, HexColor.RED },
+        // { HexColor.RED, HexColor.RED, HexColor.NONE }
+        // };
+        // SpinHexModel model = new SpinHexModel(smallBoardStart, smallBoardTarget);
+        // for (int i = 0; i < 4; i++) {
+        // model.makeMove(new TwoPhaseAction<>(new AxialPosition(1, 1),
+        // Rotation.COUNTERCLOCKWISE));
+        // }
+        // System.out.println(model);
+        // System.out.println(model.isSolved());
+        //
+        // smallBoardStart = new byte[][] {
+        // { HexColor.NONE, HexColor.RED, HexColor.RED },
+        // { HexColor.RED, HexColor.GREEN, HexColor.RED },
+        // { HexColor.BLUE, HexColor.RED, HexColor.NONE }
+        // };
+        // new BreadthFirstSearch<TwoPhaseAction<AxialPosition, Rotation>>()
+        // .solveAndPrintSolution(new SpinHexModel(smallBoardStart, smallBoardTarget));
+        // Benchmark the default puzzle
+        // wait for user input
+        System.out.println("\nBenchmarking default puzzle solution:");
+        long startTime = System.currentTimeMillis();
+        new BreadthFirstSearchModified<TwoPhaseAction<AxialPosition, Rotation>>()
                 .solveAndPrintSolution(new SpinHexModel());
+        long endTime = System.currentTimeMillis();
+        System.out.println("Solution found in " + (endTime - startTime) + " ms");
+
+        // wait for user input
+        System.out.println("Press Enter to exit...");
+        try {
+            System.in.read();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
