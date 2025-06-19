@@ -45,6 +45,7 @@ Lényeges háttéranyag: [Teljesítmény Analízis](performance_analysis.md)
 - **(1,3)** pozícióból óramutató járásával **megegyező** forgatás
 
 Index magyarázat:
+
 ![Index Magyarázat.mspaint](./assets/index_explonation.png)
 
 ## Telepítés és Futtatás
