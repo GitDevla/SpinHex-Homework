@@ -6,8 +6,11 @@ import javafx.scene.layout.Pane;
 import spinhex.model.HexagonalGrid;
 
 public class HexGrid extends Pane {
-    private int HEX_SIZE = 80;
-    private static final double PADDING = 4;
+    private static final double HEXAGON_VERTICAL_SCALE_FACTOR = 0.8;
+    private static final double HEXAGON_OFFSET_PER_ROW = 0.5;
+
+    private int hexSize = 80;
+    private double hexMargin = 4;
     private double offsetStart;
 
     public HexGrid() {
@@ -15,24 +18,36 @@ public class HexGrid extends Pane {
     }
 
     public void setSize(int size) {
-        final var pxSize = (HEX_SIZE) * size + PADDING*(size-1);
-        setPrefSize(pxSize, pxSize/1.25);
-        setMaxSize(pxSize, pxSize/1.25);
-        setMinSize(pxSize, pxSize/1.25);
+        final var pxSize = (hexSize) * size + hexMargin * (size - 1);
+        setPrefSize(pxSize, pxSize * HEXAGON_VERTICAL_SCALE_FACTOR);
+        setMaxSize(pxSize, pxSize * HEXAGON_VERTICAL_SCALE_FACTOR);
+        setMinSize(pxSize, pxSize * HEXAGON_VERTICAL_SCALE_FACTOR);
         this.offsetStart = (double) (size - 1) / 4;
     }
 
+    public int getHexSize() {
+        return hexSize;
+    }
+
     public void setHexSize(int size) {
-        this.HEX_SIZE = size;
+        this.hexSize = size;
+    }
+
+    public double getHexMargin() {
+        return hexMargin;
+    }
+
+    public void setHexMargin(double padding) {
+        this.hexMargin = padding;
     }
 
     public void addHexTile(HexTile tile) {
         final int row = tile.getQ();
         final int col = tile.getS();
-        final double paddedSize = HEX_SIZE + PADDING;
-        final double xPos = col * paddedSize;
-        final double yPos = row * (paddedSize * 0.75);
-        final double xOffset = (offsetStart - (0.5 * row)) * paddedSize;
+        final double totalHexSize = hexSize + hexMargin;
+        final double xPos = col * totalHexSize;
+        final double yPos = row * (totalHexSize * 0.75);
+        final double xOffset = (offsetStart - (HEXAGON_OFFSET_PER_ROW * row)) * totalHexSize;
 
         tile.setTranslateX(xPos - xOffset);
         tile.setTranslateY(yPos);
@@ -43,14 +58,10 @@ public class HexGrid extends Pane {
         setSize(model.getSize());
         for (var row = 0; row < model.getSize(); row++) {
             for (var col = 0; col < model.getSize(); col++) {
-                byte modelHex;
-                try {
-                    modelHex = model.get(row, col);
-                } catch (IllegalArgumentException e) {
+                if (!model.isInBounds(row, col))
                     continue;
-                }
-
-                HexTile hexTile = new HexTile(HEX_SIZE, modelHex, row, col);
+                byte modelHex = model.get(row, col);
+                HexTile hexTile = new HexTile(hexSize, modelHex, row, col);
                 addHexTile(hexTile);
             }
         }
