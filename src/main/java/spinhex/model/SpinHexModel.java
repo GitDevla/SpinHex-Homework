@@ -55,8 +55,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     /**
      * Constructs a new {@code SpinHexModel} with the initial board configuration.
-     * The initial configuration is set up with some hexes colored and others
-     * empty.
      */
     public SpinHexModel() {
         this(new byte[][] {
@@ -104,22 +102,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
      */
     public HexagonalGrid getBoard() {
         return board.clone();
-    }
-
-    private UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>> generateLegalMoves() {
-        final var legalMoves = new ArrayList<TwoPhaseAction<AxialPosition, Rotation>>();
-
-        for (int i = 0; i < getBoardSize(); i++) {
-            for (int j = 0; j < getBoardSize(); j++) {
-                if (isLegalToMoveFrom(new AxialPosition(i, j))) {
-                    legalMoves.add(new TwoPhaseAction<>(new AxialPosition(i, j), Rotation.CLOCKWISE));
-                    legalMoves.add(new TwoPhaseAction<>(new AxialPosition(i, j), Rotation.COUNTERCLOCKWISE));
-                }
-            }
-        }
-        final var legalMovesSet = new UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>>(legalMoves.size(), 1);
-        legalMovesSet.addAll(legalMoves);
-        return legalMovesSet;
     }
 
     /**
@@ -191,6 +173,8 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     /**
      * Gets the set of legal moves available from the current state.
+     * This method computes the legal moves based on the current board size
+     * and caches the result for efficiency.
      *
      * @return A set of legal moves.
      */
@@ -202,7 +186,7 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     /**
      * Checks if the specified move action is legal.
      * A move action is legal if it is possible to move from the specified position
-     * and the action is not null.
+     * and the action is not {@code null}.
      *
      * @param moveAction The move action to check.
      * @return {@code true} if the move action is legal, {@code false} otherwise.
@@ -214,12 +198,10 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
 
     /**
      * Makes a move based on the specified action.
-     * The action must be legal, otherwise an exception is thrown.
      * This method performs the rotation of the hexes around the specified position
      * in the direction specified by the action.
      *
      * @param moveAction The move action to perform.
-     * @throws IllegalArgumentException if the move action is illegal.
      */
     @Override
     public void makeMove(TwoPhaseAction<AxialPosition, Rotation> moveAction) {
@@ -227,32 +209,6 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
             case CLOCKWISE -> rotateClockwise(moveAction.from());
             case COUNTERCLOCKWISE -> rotateCounterClockwise(moveAction.from());
         }
-    }
-
-    private void rotateCounterClockwise(AxialPosition from) {
-        Byte temp = getHex(from.add(ADJACENT_DIRECTIONS[0]));
-
-        for (int i = 0; i < ADJACENT_DIRECTIONS.length - 1; i++) {
-            AxialPosition current = from.add(ADJACENT_DIRECTIONS[i]);
-            AxialPosition next = from.add(ADJACENT_DIRECTIONS[i + 1]);
-            board.set(current, getHex(next));
-        }
-
-        AxialPosition lastPosition = from.add(ADJACENT_DIRECTIONS[5]);
-        board.set(lastPosition, temp);
-    }
-
-    private void rotateClockwise(AxialPosition from) {
-        Byte temp = getHex(from.add(ADJACENT_DIRECTIONS[5]));
-
-        for (int i = ADJACENT_DIRECTIONS.length - 1; i > 0; i--) {
-            AxialPosition current = from.add(ADJACENT_DIRECTIONS[i]);
-            AxialPosition previous = from.add(ADJACENT_DIRECTIONS[i - 1]);
-            board.set(current, getHex(previous));
-        }
-
-        AxialPosition firstPosition = from.add(ADJACENT_DIRECTIONS[0]);
-        board.set(firstPosition, temp);
     }
 
     /**
@@ -320,5 +276,47 @@ public class SpinHexModel implements TwoPhaseActionState<AxialPosition, Rotation
     @Override
     public int hashCode() {
         return board.hashCode();
+    }
+
+    private UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>> generateLegalMoves() {
+        final var legalMoves = new ArrayList<TwoPhaseAction<AxialPosition, Rotation>>();
+
+        for (int i = 0; i < getBoardSize(); i++) {
+            for (int j = 0; j < getBoardSize(); j++) {
+                if (isLegalToMoveFrom(new AxialPosition(i, j))) {
+                    legalMoves.add(new TwoPhaseAction<>(new AxialPosition(i, j), Rotation.CLOCKWISE));
+                    legalMoves.add(new TwoPhaseAction<>(new AxialPosition(i, j), Rotation.COUNTERCLOCKWISE));
+                }
+            }
+        }
+        final var legalMovesSet = new UnifiedSet<TwoPhaseAction<AxialPosition, Rotation>>(legalMoves.size(), 1);
+        legalMovesSet.addAll(legalMoves);
+        return legalMovesSet;
+    }
+
+    private void rotateCounterClockwise(AxialPosition from) {
+        Byte temp = getHex(from.add(ADJACENT_DIRECTIONS[0]));
+
+        for (int i = 0; i < ADJACENT_DIRECTIONS.length - 1; i++) {
+            AxialPosition current = from.add(ADJACENT_DIRECTIONS[i]);
+            AxialPosition next = from.add(ADJACENT_DIRECTIONS[i + 1]);
+            board.set(current, getHex(next));
+        }
+
+        AxialPosition lastPosition = from.add(ADJACENT_DIRECTIONS[5]);
+        board.set(lastPosition, temp);
+    }
+
+    private void rotateClockwise(AxialPosition from) {
+        Byte temp = getHex(from.add(ADJACENT_DIRECTIONS[5]));
+
+        for (int i = ADJACENT_DIRECTIONS.length - 1; i > 0; i--) {
+            AxialPosition current = from.add(ADJACENT_DIRECTIONS[i]);
+            AxialPosition previous = from.add(ADJACENT_DIRECTIONS[i - 1]);
+            board.set(current, getHex(previous));
+        }
+
+        AxialPosition firstPosition = from.add(ADJACENT_DIRECTIONS[0]);
+        board.set(firstPosition, temp);
     }
 }
