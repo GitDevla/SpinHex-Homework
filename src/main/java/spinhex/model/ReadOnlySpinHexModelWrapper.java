@@ -58,17 +58,21 @@ public class ReadOnlySpinHexModelWrapper extends SpinHexModel {
         return boardProperty[q][s];
     }
 
+    /**
+     * Makes a move in the SpinHex model and updates the property model
+     * accordingly.
+     */
+    @Override
+    public void makeMove(TwoPhaseAction<AxialPosition, Rotation> moveAction) {
+        super.makeMove(moveAction);
+        updatePropertyModelAround(moveAction.from().q(), moveAction.from().s());
+    }
+
     private void updatePropertyModelAround(int q, int s) {
         for (var d : ADJACENT_DIRECTIONS) {
             var nq = q + d.q();
             var ns = s + d.s();
             boardProperty[nq][ns].setValue(board.get(nq, ns));
         }
-    }
-
-    @Override
-    public void makeMove(TwoPhaseAction<AxialPosition, Rotation> moveAction) {
-        super.makeMove(moveAction);
-        updatePropertyModelAround(moveAction.from().q(), moveAction.from().s());
     }
 }
