@@ -1,5 +1,3 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/UkdUJk5L)
-
 # SpinHex
 
 Debreceni Egyetem, Informatikai Kar
@@ -7,6 +5,8 @@ Programtervező informatikus BSc, 2024/2025. tanév, 2. félév
 Szoftverfejlesztés (INBPM0420E) – Házi feladat projekt
 
 Készítette: Pataki Dávid Ferenc (JDS8WG)
+
+Dokumentáció: [SpinHex Dokumentáció](https://gitdevla.github.io/SpinHex-Homework/)
 
 Lényeges háttéranyag: [Teljesítmény Analízis](performance_analysis.md)
 
